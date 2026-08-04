@@ -53,12 +53,18 @@ class BuildCreatorView(ft.Column):
         self.fps_text = ft.Text("0 FPS", size=32, weight=ft.FontWeight.BOLD)
         self.bottleneck_column = ft.Column(spacing=10)
 
+        # Workbench tab pieces, updated in place by _recalculate().
+        self.workbench_progress_text = ft.Text("", size=13, color=theme.TEXT_MUTED)
+        self.workbench_nodes_column = ft.Column(spacing=10)
+
         self.overview_tab = ft.Container(visible=True, content=self._build_overview())
         self.parts_tab = ft.Container(visible=False, content=self._build_parts())
         self.performance_tab = ft.Container(visible=False, content=self._build_performance())
+        self.workbench_tab = ft.Container(visible=False, content=self._build_workbench())
         self.overview_toggle: ft.Container | None = None
         self.parts_toggle: ft.Container | None = None
         self.performance_toggle: ft.Container | None = None
+        self.workbench_toggle: ft.Container | None = None
 
         self.controls = self._build_layout()
         self._recalculate()
@@ -84,6 +90,7 @@ class BuildCreatorView(ft.Column):
         self.overview_toggle = make_option("Overview", 0)
         self.parts_toggle = make_option("Parts", 1)
         self.performance_toggle = make_option("Performance", 2)
+        self.workbench_toggle = make_option("Workbench", 3)
         self._style_toggle()
 
         return ft.Container(
@@ -92,12 +99,18 @@ class BuildCreatorView(ft.Column):
             border=ft.Border.all(1, theme.BORDER),
             border_radius=16,
             content=ft.Row(
-                [self.overview_toggle, self.parts_toggle, self.performance_toggle], spacing=4
+                [self.overview_toggle, self.parts_toggle, self.performance_toggle, self.workbench_toggle],
+                spacing=4,
             ),
         )
 
     def _style_toggle(self):
-        toggles = ((0, self.overview_toggle), (1, self.parts_toggle), (2, self.performance_toggle))
+        toggles = (
+            (0, self.overview_toggle),
+            (1, self.parts_toggle),
+            (2, self.performance_toggle),
+            (3, self.workbench_toggle),
+        )
         for index, container in toggles:
             active = index == self.tab_index
             container.bgcolor = theme.ACCENT_SOFT if active else None
@@ -108,6 +121,7 @@ class BuildCreatorView(ft.Column):
         self.overview_tab.visible = index == 0
         self.parts_tab.visible = index == 1
         self.performance_tab.visible = index == 2
+        self.workbench_tab.visible = index == 3
         self._style_toggle()
         self._safe_update()
 
@@ -238,6 +252,76 @@ class BuildCreatorView(ft.Column):
             spacing=14,
         )
 
+    def _build_workbench(self) -> ft.Control:
+        case_outline = ft.Container(
+            height=120,
+            border_radius=16,
+            bgcolor=theme.SURFACE_ALT,
+            border=ft.Border.all(2, theme.BORDER),
+            alignment=ft.Alignment.CENTER,
+            content=ft.Column(
+                [
+                    ft.Icon(ft.Icons.INVENTORY_2_ROUNDED, color=theme.ACCENT, size=40),
+                    self.workbench_progress_text,
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=6,
+            ),
+        )
+
+        return ft.Column(
+            [
+                ft.Text(
+                    "A visual map of your build — tap any slot to fill it in the Parts tab.",
+                    size=12,
+                    color=theme.TEXT_MUTED,
+                ),
+                case_outline,
+                self.workbench_nodes_column,
+            ],
+            spacing=16,
+        )
+
+    def _workbench_node(self, category: str, part: dict | None) -> ft.Control:
+        filled = part is not None
+        icon_color = theme.ACCENT if filled else theme.TEXT_MUTED
+        return ft.Container(
+            content=ft.Row(
+                [
+                    ft.Container(
+                        width=36,
+                        height=36,
+                        border_radius=10,
+                        bgcolor=theme.ACCENT_SOFT if filled else theme.SURFACE_ALT,
+                        alignment=ft.Alignment.CENTER,
+                        content=ft.Icon(theme.CATEGORY_ICONS[category], size=18, color=icon_color),
+                    ),
+                    ft.Column(
+                        [
+                            ft.Text(catalog.CATEGORY_LABELS[category], size=11, color=theme.TEXT_MUTED),
+                            ft.Text(
+                                part["name"] if filled else "Not selected",
+                                size=13,
+                                weight=ft.FontWeight.W_600 if filled else ft.FontWeight.NORMAL,
+                                color=theme.TEXT_PRIMARY if filled else theme.TEXT_MUTED,
+                                max_lines=1,
+                            ),
+                        ],
+                        spacing=1,
+                        expand=True,
+                    ),
+                ],
+                spacing=10,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            padding=10,
+            bgcolor=theme.SURFACE,
+            border=ft.Border.all(1, theme.ACCENT if filled else theme.BORDER),
+            border_radius=12,
+            on_click=lambda e: self._set_tab(1),
+            ink=True,
+        )
+
     def _build_layout(self) -> list[ft.Control]:
         bottom_bar = theme.card(
             ft.Column(
@@ -265,7 +349,7 @@ class BuildCreatorView(ft.Column):
         return [
             ft.Text("Build Creator", size=26, weight=ft.FontWeight.BOLD),
             self._segmented_toggle(),
-            theme.card(ft.Column([self.overview_tab, self.parts_tab, self.performance_tab])),
+            theme.card(ft.Column([self.overview_tab, self.parts_tab, self.performance_tab, self.workbench_tab])),
             bottom_bar,
         ]
 
@@ -329,7 +413,15 @@ class BuildCreatorView(ft.Column):
             self.status_chip.content = ft.Text("No issues", color=theme.SUCCESS, weight=ft.FontWeight.BOLD)
 
         self._recalculate_performance()
+        self._recalculate_workbench()
         self._safe_update()
+
+    def _recalculate_workbench(self):
+        filled_count = sum(1 for p in self.selected.values() if p)
+        self.workbench_progress_text.value = f"{filled_count}/{len(catalog.CATEGORIES)} components selected"
+        self.workbench_nodes_column.controls = [
+            self._workbench_node(cat, self.selected[cat]) for cat in catalog.CATEGORIES
+        ]
 
     def _recalculate_performance(self):
         fps = performance.estimate_fps(

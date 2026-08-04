@@ -11,7 +11,7 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 | Epic 5 — Performance Estimators (FPS, bottleneck analysis) | Phase 4 | ✅ Done |
 | Epic 6 — Price Tracking | Phase 6 | ✅ Done |
 | Epic 7 — Community & Cloud Sync | Phase 5 | ✅ Done |
-| Epic 8 — 3D Workbench / AR | Phase 7 | Backlog |
+| Epic 8 — Workbench (stylized 2D) | Phase 7 | ✅ Done (2D, not real 3D/AR — see notes) |
 
 ## Epic 1 — Foundation & Desktop Test Harness ✅
 - Parts catalog (`app/core/catalog.py`, `app/data/parts_catalog.json`)
@@ -55,3 +55,9 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 - `app/core/community_session.py`: persists the Supabase session locally (gitignored) so login survives app restarts
 - `app/ui/community_view.py` (new) and `app/ui/profile_view.py` (now a stateful `ProfileView` with an auth section) — reached from Profile's "Browse Community" button, no dedicated nav tab (same pattern as My Builds/Performance)
 - Credentials in `.env` as `SUPABASE_URL` / `SUPABASE_ANON_KEY` (the anon/publishable key — safe for client apps, respects RLS); verified end-to-end against the live project (sign-up, publish, feed, favorite toggle) before shipping
+
+## Epic 8 — Workbench (stylized 2D) ✅
+- Flet has no 3D engine, model loader, or AR/camera integration, and the original vision doc itself labels real 3D Workbench / AR Mode as "Future" — confirmed with the user to build a stylized 2D visualization instead, not real 3D.
+- New fourth tab ("Workbench") in Build Creator, alongside Overview/Parts/Performance: a case outline with a live "X/8 components selected" count, and a tappable node per category showing filled (accent-colored, part name) or empty (muted, "Not selected") state. Tapping a node jumps to the Parts tab.
+- Pure presentation over the existing `self.selected` build state — no new core/ module.
+- Real 3D/AR remains a legitimate future project if ever pursued (would need an embedded WebView + Three.js + sourced 3D model assets), but is out of scope here.
