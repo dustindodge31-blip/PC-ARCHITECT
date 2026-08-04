@@ -40,13 +40,26 @@ def _issue_penalty(parts: dict) -> float:
     return sum(_ISSUE_PENALTY.get(issue.level, 0) for issue in issues)
 
 
+def gpu_gaming_index(gpu: dict | None) -> int:
+    """0-100 relative gaming capability of a GPU alone, used by both the Gaming
+    axis score and the Performance tab's FPS estimator (core/performance.py)."""
+    if not gpu:
+        return 0
+    return _clamp(min(100, gpu["vram_gb"] * 4 + gpu["tdp_w"] * 0.15))
+
+
+def cpu_gaming_index(cpu: dict | None) -> int:
+    """0-100 relative gaming capability of a CPU alone (see gpu_gaming_index)."""
+    if not cpu:
+        return 0
+    return _clamp(min(100, cpu["cores"] * 6))
+
+
 def score_gaming(parts: dict) -> int:
     gpu, cpu = parts.get("gpu"), parts.get("cpu")
     if not gpu and not cpu:
         return 0
-    gpu_score = min(100, gpu["vram_gb"] * 4 + gpu["tdp_w"] * 0.15) if gpu else 0
-    cpu_score = min(100, cpu["cores"] * 6) if cpu else 0
-    score = gpu_score * 0.7 + cpu_score * 0.3
+    score = gpu_gaming_index(gpu) * 0.7 + cpu_gaming_index(cpu) * 0.3
     return _clamp(score - _issue_penalty(parts))
 
 

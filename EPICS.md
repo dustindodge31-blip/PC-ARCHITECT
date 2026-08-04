@@ -8,7 +8,7 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 | Epic 2 — Visual Identity & Home Dashboard | Phase 1 (UI) | ✅ Done |
 | Epic 3 — Build Creator Redesign + Build Score Engine | Phase 2 + Phase 4 (scoring) | ✅ Done |
 | Epic 4 — AI Architect | Phase 3 | ✅ Done |
-| Epic 5 — Performance Estimators (FPS, bottleneck analysis) | Phase 4 | Backlog |
+| Epic 5 — Performance Estimators (FPS, bottleneck analysis) | Phase 4 | ✅ Done |
 | Epic 6 — Price Tracking | Phase 6 | Backlog |
 | Epic 7 — Community & Cloud Sync | Phase 5 | Backlog |
 | Epic 8 — 3D Workbench / AR | Phase 7 | Backlog |
@@ -36,3 +36,8 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 - Single-shot AI Architect screen (`app/ui/ai_view.py`): prompt box, Generate button, loading state, inline error handling (bad key, network, parse failures)
 - Results hand off into the existing Build Creator via a new `load_from_parts()` (`app/ui/build_creator.py`), with the AI's reasoning shown in a dismissible card on the Overview tab
 - Gemini API key lives in the project's local `.env` (gitignored); model is `gemini-2.5-flash`, configurable via `GEMINI_MODEL`
+
+## Epic 5 — Performance Estimators ✅
+- FPS estimator (`app/core/performance.py`): 8 curated games, resolution/settings/ray-tracing/upscaling/frame-gen controls, heuristic FPS calibrated off the same GPU/CPU gaming indices as the Epic 3 scoring engine (`scoring.gpu_gaming_index`/`cpu_gaming_index`, extracted for reuse)
+- Bottleneck analysis: flags GPU/CPU imbalance and low RAM with why/impact/fix explanations, distinct from `compatibility.py`'s "does it work" checks
+- New third tab ("Performance") in Build Creator, alongside Overview and Parts

@@ -2,7 +2,7 @@
 sharing a persistent bottom bar (compatibility, price, power, save)."""
 import flet as ft
 
-from core import catalog, compatibility, storage, scoring
+from core import catalog, compatibility, storage, scoring, performance
 from ui import theme
 from ui.score_widgets import score_badge, score_bar, star_row
 
@@ -52,10 +52,22 @@ class BuildCreatorView(ft.Column):
         self.score_bars_column = ft.Column(spacing=12)
         self.reasoning_card = ft.Container(visible=False)
 
+        # Performance tab state.
+        self.perf_game_id = performance.GAMES[0]["id"]
+        self.perf_resolution = "1080p"
+        self.perf_settings = "High"
+        self.perf_ray_tracing = False
+        self.perf_upscaling = "Off"
+        self.perf_frame_gen = False
+        self.fps_text = ft.Text("0 FPS", size=32, weight=ft.FontWeight.BOLD)
+        self.bottleneck_column = ft.Column(spacing=10)
+
         self.overview_tab = ft.Container(visible=True, content=self._build_overview())
         self.parts_tab = ft.Container(visible=False, content=self._build_parts())
+        self.performance_tab = ft.Container(visible=False, content=self._build_performance())
         self.overview_toggle: ft.Container | None = None
         self.parts_toggle: ft.Container | None = None
+        self.performance_toggle: ft.Container | None = None
 
         self.controls = self._build_layout()
         self._recalculate()
@@ -80,6 +92,7 @@ class BuildCreatorView(ft.Column):
 
         self.overview_toggle = make_option("Overview", 0)
         self.parts_toggle = make_option("Parts", 1)
+        self.performance_toggle = make_option("Performance", 2)
         self._style_toggle()
 
         return ft.Container(
@@ -87,11 +100,14 @@ class BuildCreatorView(ft.Column):
             bgcolor=theme.SURFACE,
             border=ft.Border.all(1, theme.BORDER),
             border_radius=16,
-            content=ft.Row([self.overview_toggle, self.parts_toggle], spacing=4),
+            content=ft.Row(
+                [self.overview_toggle, self.parts_toggle, self.performance_toggle], spacing=4
+            ),
         )
 
     def _style_toggle(self):
-        for index, container in ((0, self.overview_toggle), (1, self.parts_toggle)):
+        toggles = ((0, self.overview_toggle), (1, self.parts_toggle), (2, self.performance_toggle))
+        for index, container in toggles:
             active = index == self.tab_index
             container.bgcolor = theme.ACCENT_SOFT if active else None
             container.content.color = theme.ACCENT if active else theme.TEXT_MUTED
@@ -100,6 +116,7 @@ class BuildCreatorView(ft.Column):
         self.tab_index = index
         self.overview_tab.visible = index == 0
         self.parts_tab.visible = index == 1
+        self.performance_tab.visible = index == 2
         self._style_toggle()
         self._safe_update()
 
@@ -167,6 +184,69 @@ class BuildCreatorView(ft.Column):
             )
         return ft.Column(rows, spacing=14)
 
+    def _build_performance(self) -> ft.Control:
+        game_dd = ft.Dropdown(
+            label="Game",
+            value=self.perf_game_id,
+            options=[ft.dropdown.Option(key=g["id"], text=g["name"]) for g in performance.GAMES],
+            expand=True,
+            on_select=lambda e: self._on_perf_change("perf_game_id", e.control.value),
+        )
+        resolution_dd = ft.Dropdown(
+            label="Resolution",
+            value=self.perf_resolution,
+            options=[ft.dropdown.Option(key=r, text=r) for r in performance.RESOLUTIONS],
+            expand=True,
+            on_select=lambda e: self._on_perf_change("perf_resolution", e.control.value),
+        )
+        settings_dd = ft.Dropdown(
+            label="Settings",
+            value=self.perf_settings,
+            options=[ft.dropdown.Option(key=s, text=s) for s in performance.SETTINGS_PRESETS],
+            expand=True,
+            on_select=lambda e: self._on_perf_change("perf_settings", e.control.value),
+        )
+        upscaling_dd = ft.Dropdown(
+            label="Upscaling",
+            value=self.perf_upscaling,
+            options=[ft.dropdown.Option(key=u, text=u) for u in performance.UPSCALING_MODES],
+            expand=True,
+            on_select=lambda e: self._on_perf_change("perf_upscaling", e.control.value),
+        )
+        rt_switch = ft.Row(
+            [ft.Text("Ray Tracing", size=13), ft.Switch(
+                value=self.perf_ray_tracing,
+                on_change=lambda e: self._on_perf_change("perf_ray_tracing", e.control.value),
+            )],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        )
+        fg_switch = ft.Row(
+            [ft.Text("Frame Generation", size=13), ft.Switch(
+                value=self.perf_frame_gen,
+                on_change=lambda e: self._on_perf_change("perf_frame_gen", e.control.value),
+            )],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        )
+
+        return ft.Column(
+            [
+                ft.Row([game_dd], spacing=10),
+                ft.Row([resolution_dd, settings_dd], spacing=10),
+                upscaling_dd,
+                rt_switch,
+                fg_switch,
+                ft.Divider(color=theme.BORDER),
+                ft.Column(
+                    [ft.Text("Estimated FPS", size=12, color=theme.TEXT_MUTED), self.fps_text],
+                    spacing=2,
+                ),
+                ft.Divider(color=theme.BORDER),
+                ft.Text("Bottleneck Analysis", size=14, weight=ft.FontWeight.W_600),
+                self.bottleneck_column,
+            ],
+            spacing=14,
+        )
+
     def _build_layout(self) -> list[ft.Control]:
         bottom_bar = theme.card(
             ft.Column(
@@ -194,7 +274,7 @@ class BuildCreatorView(ft.Column):
         return [
             ft.Text("Build Creator", size=26, weight=ft.FontWeight.BOLD),
             self._segmented_toggle(),
-            theme.card(ft.Column([self.overview_tab, self.parts_tab])),
+            theme.card(ft.Column([self.overview_tab, self.parts_tab, self.performance_tab])),
             bottom_bar,
         ]
 
@@ -206,6 +286,11 @@ class BuildCreatorView(ft.Column):
     def _on_select(self, category: str, part_id: str | None):
         self.selected[category] = catalog.find_part(category, part_id) if part_id else None
         self._recalculate()
+
+    def _on_perf_change(self, attr: str, value):
+        setattr(self, attr, value)
+        self._recalculate_performance()
+        self._safe_update()
 
     def _recalculate(self):
         total = compatibility.total_price(self.selected)
@@ -252,7 +337,44 @@ class BuildCreatorView(ft.Column):
         else:
             self.status_chip.content = ft.Text("No issues", color=theme.SUCCESS, weight=ft.FontWeight.BOLD)
 
+        self._recalculate_performance()
         self._safe_update()
+
+    def _recalculate_performance(self):
+        fps = performance.estimate_fps(
+            self.selected,
+            self.perf_game_id,
+            self.perf_resolution,
+            self.perf_settings,
+            self.perf_ray_tracing,
+            self.perf_upscaling,
+            self.perf_frame_gen,
+        )
+        self.fps_text.value = f"{fps} FPS" if fps > 0 else "— FPS"
+
+        self.bottleneck_column.controls.clear()
+        insights = performance.analyze_bottleneck(self.selected)
+        if not insights:
+            self.bottleneck_column.controls.append(
+                ft.Text("No bottlenecks detected.", size=12, color=theme.SUCCESS)
+            )
+        for insight in insights:
+            color = theme.ERROR if insight.severity == "error" else theme.WARNING
+            icon = ft.Icons.ERROR_ROUNDED if insight.severity == "error" else ft.Icons.WARNING_AMBER_ROUNDED
+            self.bottleneck_column.controls.append(
+                ft.Column(
+                    [
+                        ft.Row(
+                            [ft.Icon(icon, color=color, size=18), ft.Text(insight.title, color=color, weight=ft.FontWeight.BOLD, size=13)],
+                            spacing=8,
+                        ),
+                        ft.Text(f"Why: {insight.why}", size=11, color=theme.TEXT_MUTED),
+                        ft.Text(f"Impact: {insight.impact}", size=11, color=theme.TEXT_MUTED),
+                        ft.Text(f"Fix: {insight.fix}", size=11, color=theme.TEXT_MUTED),
+                    ],
+                    spacing=3,
+                )
+            )
 
     def _safe_update(self):
         try:
