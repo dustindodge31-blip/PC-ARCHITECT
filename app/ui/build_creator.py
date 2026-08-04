@@ -468,7 +468,7 @@ class BuildCreatorView(ft.Column):
     def _on_save_click(self, e):
         name = self.build_name.strip() or "Untitled Build"
         self.build_id = storage.save_build(name, self.selected, self.build_id)
-        self.app_page.open(
+        self.app_page.show_dialog(
             ft.SnackBar(content=ft.Text(f"Saved “{name}”"), bgcolor=theme.SURFACE_ALT)
         )
         if self.on_saved:
