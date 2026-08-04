@@ -12,6 +12,7 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 | Epic 6 — Price Tracking | Phase 6 | ✅ Done |
 | Epic 7 — Community & Cloud Sync | Phase 5 | ✅ Done |
 | Epic 8 — Workbench (stylized 2D) | Phase 7 | ✅ Done (2D, not real 3D/AR — see notes) |
+| Epic 9 — Real 3D Workbench / AR Mode | Phase 7 (deferred) | Backlog (future — needs embedded WebView + Three.js + sourced 3D assets) |
 
 ## Epic 1 — Foundation & Desktop Test Harness ✅
 - Parts catalog (`app/core/catalog.py`, `app/data/parts_catalog.json`)
