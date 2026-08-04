@@ -46,10 +46,19 @@ def save_build(name: str, parts: dict, build_id: int | None = None) -> int:
             )
             return cur.lastrowid
         else:
-            conn.execute(
+            cur = conn.execute(
                 "UPDATE builds SET name = ?, updated_at = ?, parts_json = ? WHERE id = ?",
                 (name, now, parts_json, build_id),
             )
+            if cur.rowcount == 0:
+                # The row this build_id pointed to no longer exists (e.g. deleted
+                # elsewhere while still loaded here) -- save as a new build instead
+                # of silently doing nothing.
+                cur = conn.execute(
+                    "INSERT INTO builds (name, created_at, updated_at, parts_json) VALUES (?, ?, ?, ?)",
+                    (name, now, now, parts_json),
+                )
+                return cur.lastrowid
             return build_id
 
 
