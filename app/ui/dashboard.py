@@ -15,7 +15,7 @@ CATEGORY_FILTERS = [
 ]
 
 
-def _build_card(row: dict, on_open_build) -> ft.Control:
+def _build_card(row: dict, on_open_build, on_long_press) -> ft.Control:
     selection_ids = json.loads(row["parts_json"])
     parts = {cat: (catalog.find_part(cat, pid) if pid else None) for cat, pid in selection_ids.items()}
 
@@ -35,7 +35,7 @@ def _build_card(row: dict, on_open_build) -> ft.Control:
         content=ft.Icon(ft.Icons.DEVELOPER_BOARD_ROUNDED, color=theme.TEXT_MUTED, size=26),
     )
 
-    return ft.Container(
+    card = ft.Container(
         content=ft.Row(
             [
                 thumbnail,
@@ -56,8 +56,13 @@ def _build_card(row: dict, on_open_build) -> ft.Control:
         bgcolor=theme.SURFACE,
         border=ft.Border.all(1, theme.BORDER),
         border_radius=14,
-        on_click=lambda e: on_open_build(row) if on_open_build else None,
         ink=True,
+    )
+
+    return ft.GestureDetector(
+        content=card,
+        on_tap=lambda e: on_open_build(row) if on_open_build else None,
+        on_long_press=lambda e: on_long_press(row) if on_long_press else None,
     )
 
 
@@ -67,9 +72,32 @@ def build_dashboard(
     on_go_ai=None,
     on_view_all_builds=None,
     on_open_build=None,
+    on_build_deleted=None,
 ) -> ft.Control:
     builds = storage.list_builds()
     recent_builds = builds[:3]
+
+    def confirm_delete(row: dict):
+        def do_delete(e):
+            storage.delete_build(row["id"])
+            page.pop_dialog()
+            if on_build_deleted:
+                on_build_deleted()
+
+        def cancel(e):
+            page.pop_dialog()
+
+        page.show_dialog(
+            ft.AlertDialog(
+                title=ft.Text("Delete build?"),
+                content=ft.Text(f"“{row['name']}” will be permanently deleted."),
+                actions=[
+                    ft.TextButton("Cancel", on_click=cancel),
+                    ft.TextButton("Delete", on_click=do_delete, style=ft.ButtonStyle(color=theme.ERROR)),
+                ],
+                actions_alignment=ft.MainAxisAlignment.END,
+            )
+        )
 
     header_row = ft.Stack(
         [
@@ -155,20 +183,26 @@ def build_dashboard(
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
     )
 
-    builds_header = ft.Row(
+    builds_header = ft.Column(
         [
-            ft.Text("My Builds", size=16, weight=ft.FontWeight.W_600),
-            ft.TextButton(
-                "View all",
-                on_click=lambda e: on_view_all_builds() if on_view_all_builds else None,
+            ft.Row(
+                [
+                    ft.Text("My Builds", size=16, weight=ft.FontWeight.W_600),
+                    ft.TextButton(
+                        "View all",
+                        on_click=lambda e: on_view_all_builds() if on_view_all_builds else None,
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             ),
+            ft.Text("Hold a build to delete it", size=11, color=theme.TEXT_MUTED),
         ],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        spacing=2,
     )
 
     if recent_builds:
         builds_list = ft.Column(
-            [_build_card(row, on_open_build) for row in recent_builds],
+            [_build_card(row, on_open_build, confirm_delete) for row in recent_builds],
             spacing=10,
         )
     else:

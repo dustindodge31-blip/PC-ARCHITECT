@@ -96,6 +96,7 @@ async def main(page: ft.Page):
             on_go_ai=lambda: set_index(2),
             on_view_all_builds=show_my_builds_list,
             on_open_build=open_build_in_creator,
+            on_build_deleted=show_dashboard,
         )
         nav.selected_index = 0
         page.update()
