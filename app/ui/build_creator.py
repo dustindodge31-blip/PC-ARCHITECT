@@ -44,7 +44,7 @@ class BuildCreatorView(ft.Column):
                     for p in catalog.parts_for(cat)
                 ],
                 expand=True,
-                on_change=lambda e, c=cat: self._on_select(c, e.control.value),
+                on_select=lambda e, c=cat: self._on_select(c, e.control.value),
             )
             self.dropdowns[cat] = dd
             picker_rows.append(dd)
