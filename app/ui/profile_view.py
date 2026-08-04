@@ -25,7 +25,7 @@ class ProfileView(ft.Column):
         self.auth_section = ft.Column(spacing=12)
 
         self.controls = [
-            ft.Text("Profile", size=26, weight=ft.FontWeight.BOLD),
+            ft.Row([ft.Text("Profile", size=26, weight=ft.FontWeight.BOLD)], alignment=ft.MainAxisAlignment.CENTER),
             theme.card(
                 ft.Column(
                     [
