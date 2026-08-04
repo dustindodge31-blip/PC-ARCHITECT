@@ -1,0 +1,53 @@
+{
+  "cpu": [
+    {"id": "cpu-7600x", "name": "AMD Ryzen 5 7600X", "socket": "AM5", "cores": 6, "threads": 12, "tdp_w": 105, "price": 229.0},
+    {"id": "cpu-7800x3d", "name": "AMD Ryzen 7 7800X3D", "socket": "AM5", "cores": 8, "threads": 16, "tdp_w": 120, "price": 359.0},
+    {"id": "cpu-9800x3d", "name": "AMD Ryzen 7 9800X3D", "socket": "AM5", "cores": 8, "threads": 16, "tdp_w": 120, "price": 479.0},
+    {"id": "cpu-13600k", "name": "Intel Core i5-13600K", "socket": "LGA1700", "cores": 14, "threads": 20, "tdp_w": 125, "price": 269.0},
+    {"id": "cpu-14700k", "name": "Intel Core i7-14700K", "socket": "LGA1700", "cores": 20, "threads": 28, "tdp_w": 125, "price": 389.0},
+    {"id": "cpu-245k", "name": "Intel Core Ultra 5 245K", "socket": "LGA1851", "cores": 14, "threads": 14, "tdp_w": 125, "price": 309.0}
+  ],
+  "motherboard": [
+    {"id": "mb-b650", "name": "MSI B650 Gaming Plus WiFi", "socket": "AM5", "chipset": "B650", "ram_type": "DDR5", "max_ram_gb": 128, "form_factor": "ATX", "m2_slots": 2, "sata_ports": 4, "price": 169.0},
+    {"id": "mb-x670e", "name": "ASUS ROG Strix X670E-E", "socket": "AM5", "chipset": "X670E", "ram_type": "DDR5", "max_ram_gb": 128, "form_factor": "ATX", "m2_slots": 4, "sata_ports": 4, "price": 449.0},
+    {"id": "mb-b760", "name": "Gigabyte B760 Gaming X", "socket": "LGA1700", "chipset": "B760", "ram_type": "DDR5", "max_ram_gb": 128, "form_factor": "ATX", "m2_slots": 2, "sata_ports": 4, "price": 159.0},
+    {"id": "mb-z790", "name": "ASUS ROG Strix Z790-E", "socket": "LGA1700", "chipset": "Z790", "ram_type": "DDR5", "max_ram_gb": 128, "form_factor": "ATX", "m2_slots": 5, "sata_ports": 6, "price": 469.0},
+    {"id": "mb-z890", "name": "MSI MPG Z890 Edge", "socket": "LGA1851", "chipset": "Z890", "ram_type": "DDR5", "max_ram_gb": 192, "form_factor": "ATX", "m2_slots": 4, "sata_ports": 4, "price": 329.0},
+    {"id": "mb-b650m", "name": "ASRock B650M-HDV", "socket": "AM5", "chipset": "B650", "ram_type": "DDR5", "max_ram_gb": 96, "form_factor": "mATX", "m2_slots": 1, "sata_ports": 4, "price": 109.0}
+  ],
+  "ram": [
+    {"id": "ram-16-6000", "name": "Corsair Vengeance 16GB (2x8) DDR5-6000", "type": "DDR5", "speed_mhz": 6000, "capacity_gb": 16, "modules": 2, "price": 54.0},
+    {"id": "ram-32-6000", "name": "G.Skill Trident Z5 32GB (2x16) DDR5-6000", "type": "DDR5", "speed_mhz": 6000, "capacity_gb": 32, "modules": 2, "price": 104.0},
+    {"id": "ram-64-6000", "name": "Corsair Dominator 64GB (2x32) DDR5-6000", "type": "DDR5", "speed_mhz": 6000, "capacity_gb": 64, "modules": 2, "price": 219.0},
+    {"id": "ram-32-3200", "name": "Corsair Vengeance LPX 32GB (2x16) DDR4-3200", "type": "DDR4", "speed_mhz": 3200, "capacity_gb": 32, "modules": 2, "price": 79.0}
+  ],
+  "gpu": [
+    {"id": "gpu-4060", "name": "NVIDIA GeForce RTX 4060", "vram_gb": 8, "tdp_w": 115, "length_mm": 244, "price": 299.0},
+    {"id": "gpu-4070super", "name": "NVIDIA GeForce RTX 4070 SUPER", "vram_gb": 12, "tdp_w": 220, "length_mm": 285, "price": 599.0},
+    {"id": "gpu-4080super", "name": "NVIDIA GeForce RTX 4080 SUPER", "vram_gb": 16, "tdp_w": 320, "length_mm": 310, "price": 999.0},
+    {"id": "gpu-4090", "name": "NVIDIA GeForce RTX 4090", "vram_gb": 24, "tdp_w": 450, "length_mm": 336, "price": 1599.0},
+    {"id": "gpu-7800xt", "name": "AMD Radeon RX 7800 XT", "vram_gb": 16, "tdp_w": 263, "length_mm": 267, "price": 499.0}
+  ],
+  "storage": [
+    {"id": "ssd-1tb-nvme", "name": "Samsung 990 Pro 1TB NVMe", "type": "NVMe", "capacity_gb": 1000, "price": 89.0},
+    {"id": "ssd-2tb-nvme", "name": "WD Black SN850X 2TB NVMe", "type": "NVMe", "capacity_gb": 2000, "price": 159.0},
+    {"id": "ssd-500gb-sata", "name": "Crucial MX500 500GB SATA", "type": "SATA", "capacity_gb": 500, "price": 39.0}
+  ],
+  "psu": [
+    {"id": "psu-550", "name": "Corsair CV550 550W 80+ Bronze", "wattage": 550, "efficiency": "80+ Bronze", "price": 59.0},
+    {"id": "psu-650", "name": "Corsair RM650 650W 80+ Gold", "wattage": 650, "efficiency": "80+ Gold", "price": 99.0},
+    {"id": "psu-850", "name": "Corsair RM850x 850W 80+ Gold", "wattage": 850, "efficiency": "80+ Gold", "price": 139.0},
+    {"id": "psu-1000", "name": "Corsair HX1000 1000W 80+ Platinum", "wattage": 1000, "efficiency": "80+ Platinum", "price": 219.0}
+  ],
+  "case": [
+    {"id": "case-4000d", "name": "Corsair 4000D Airflow", "max_gpu_length_mm": 360, "form_factors": ["ATX", "mATX", "ITX"], "price": 104.0},
+    {"id": "case-nr200", "name": "Cooler Master NR200", "max_gpu_length_mm": 330, "form_factors": ["ITX"], "price": 99.0},
+    {"id": "case-o11", "name": "Lian Li O11 Dynamic EVO", "max_gpu_length_mm": 420, "form_factors": ["ATX", "mATX", "ITX"], "price": 169.0}
+  ],
+  "cooler": [
+    {"id": "cool-hyper212", "name": "Cooler Master Hyper 212", "type": "Air", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 150, "price": 39.0},
+    {"id": "cool-nh-d15", "name": "Noctua NH-D15", "type": "Air", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 220, "price": 109.0},
+    {"id": "cool-aio240", "name": "Corsair H100i 240mm AIO", "type": "AIO", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 250, "price": 129.0},
+    {"id": "cool-aio360", "name": "Lian Li Galahad 360mm AIO", "type": "AIO", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 300, "price": 179.0}
+  ]
+}
