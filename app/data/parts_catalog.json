@@ -45,9 +45,9 @@
     {"id": "case-o11", "name": "Lian Li O11 Dynamic EVO", "max_gpu_length_mm": 420, "form_factors": ["ATX", "mATX", "ITX"], "price": 169.0}
   ],
   "cooler": [
-    {"id": "cool-hyper212", "name": "Cooler Master Hyper 212", "type": "Air", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 150, "price": 39.0},
-    {"id": "cool-nh-d15", "name": "Noctua NH-D15", "type": "Air", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 220, "price": 109.0},
-    {"id": "cool-aio240", "name": "Corsair H100i 240mm AIO", "type": "AIO", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 250, "price": 129.0},
-    {"id": "cool-aio360", "name": "Lian Li Galahad 360mm AIO", "type": "AIO", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 300, "price": 179.0}
+    {"id": "cool-hyper212", "name": "Cooler Master Hyper 212", "type": "Air", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 150, "noise_rating": 55, "price": 39.0},
+    {"id": "cool-nh-d15", "name": "Noctua NH-D15", "type": "Air", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 220, "noise_rating": 85, "price": 109.0},
+    {"id": "cool-aio240", "name": "Corsair H100i 240mm AIO", "type": "AIO", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 250, "noise_rating": 65, "price": 129.0},
+    {"id": "cool-aio360", "name": "Lian Li Galahad 360mm AIO", "type": "AIO", "sockets": ["AM5", "LGA1700", "LGA1851"], "max_tdp_w": 300, "noise_rating": 75, "price": 179.0}
   ]
 }

@@ -2,8 +2,9 @@
 import json
 import flet as ft
 
-from core import storage, catalog, profile, scoring
+from core import storage, catalog, compatibility, profile, scoring
 from ui import theme
+from ui.score_widgets import score_badge
 
 CATEGORY_FILTERS = [
     ("Gaming", ft.Icons.SPORTS_ESPORTS_ROUNDED),
@@ -12,28 +13,6 @@ CATEGORY_FILTERS = [
     ("Office", ft.Icons.WORK_ROUNDED),
     ("Custom", ft.Icons.TUNE_ROUNDED),
 ]
-
-
-def _score_color(score: int) -> str:
-    if score >= 85:
-        return theme.SUCCESS
-    if score >= 70:
-        return theme.ACCENT
-    if score >= 50:
-        return theme.WARNING
-    return theme.ERROR
-
-
-def _score_badge(score: int) -> ft.Control:
-    color = _score_color(score)
-    return ft.Container(
-        width=44,
-        height=44,
-        border_radius=22,
-        border=ft.Border.all(3, color),
-        alignment=ft.Alignment.CENTER,
-        content=ft.Text(str(score), size=14, weight=ft.FontWeight.BOLD, color=color),
-    )
 
 
 def _build_card(row: dict, on_open_build) -> ft.Control:
@@ -68,7 +47,7 @@ def _build_card(row: dict, on_open_build) -> ft.Control:
                     spacing=2,
                     expand=True,
                 ),
-                _score_badge(scoring.provisional_score(parts)),
+                score_badge(scoring.overall_score(scoring.score_build(parts, compatibility.total_price(parts)))),
             ],
             spacing=12,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,

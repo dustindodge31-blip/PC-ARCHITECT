@@ -6,7 +6,7 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 |---|---|---|
 | Epic 1 — Foundation & Desktop Test Harness | Phase 1 | ✅ Done |
 | Epic 2 — Visual Identity & Home Dashboard | Phase 1 (UI) | ✅ Done |
-| Epic 3 — Build Creator Redesign + Build Score Engine | Phase 2 + Phase 4 (scoring) | Backlog |
+| Epic 3 — Build Creator Redesign + Build Score Engine | Phase 2 + Phase 4 (scoring) | ✅ Done |
 | Epic 4 — AI Architect | Phase 3 | Backlog (needs LLM integration decision) |
 | Epic 5 — Performance Estimators (FPS, bottleneck analysis) | Phase 4 | Backlog |
 | Epic 6 — Price Tracking | Phase 6 | Backlog |
@@ -24,3 +24,9 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 - Swappable accent-theme system (infrastructure; one theme active for now)
 - Redesigned Home dashboard: greeting, AI Architect entry card, category quick-filters, My Builds cards with provisional score badges
 - 5-item bottom nav: Home, Builds, AI, Prices, Profile (AI/Prices stubbed)
+
+## Epic 3 — Build Creator Redesign + Build Score Engine ✅
+- Real multi-axis Build Score engine (Gaming/Creator/Productivity/Cooling/Noise/Value → weighted overall + tier label + star rating), heuristic from catalog specs (`app/core/scoring.py`)
+- Shared score widgets: circular badge, meter bar, star row (`app/ui/score_widgets.py`)
+- Build Creator restructured into Overview (thumbnail, score badge, tier, meters) / Parts (icon-led picker rows) tabs with a persistent bottom bar (compatibility, price, power, save)
+- Dashboard build cards now use the real scoring engine instead of Epic 2's placeholder
