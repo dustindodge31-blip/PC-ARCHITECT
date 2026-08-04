@@ -154,16 +154,24 @@ async def main(page: ft.Page):
     def on_nav_change(e):
         set_index(e.control.selected_index)
 
+    def nav_destination(icon: str, label: str) -> ft.NavigationBarDestination:
+        return ft.NavigationBarDestination(
+            icon=ft.Icon(icon, color=theme.TEXT_MUTED),
+            selected_icon=ft.Icon(icon, color=theme.ACCENT),
+            label=label,
+        )
+
     nav = ft.NavigationBar(
         selected_index=0,
         bgcolor=theme.SURFACE,
+        indicator_color=theme.ACCENT_SOFT,
         on_change=on_nav_change,
         destinations=[
-            ft.NavigationBarDestination(icon=ft.Icons.HOME_ROUNDED, label="Home"),
-            ft.NavigationBarDestination(icon=ft.Icons.BUILD_ROUNDED, label="Builds"),
-            ft.NavigationBarDestination(icon=ft.Icons.AUTO_AWESOME_ROUNDED, label="AI"),
-            ft.NavigationBarDestination(icon=ft.Icons.TRENDING_DOWN_ROUNDED, label="Prices"),
-            ft.NavigationBarDestination(icon=ft.Icons.PERSON_ROUNDED, label="Profile"),
+            nav_destination(ft.Icons.HOME_ROUNDED, "Home"),
+            nav_destination(ft.Icons.BUILD_ROUNDED, "Builds"),
+            nav_destination(ft.Icons.AUTO_AWESOME_ROUNDED, "AI"),
+            nav_destination(ft.Icons.TRENDING_DOWN_ROUNDED, "Prices"),
+            nav_destination(ft.Icons.PERSON_ROUNDED, "Profile"),
         ],
     )
 
