@@ -158,7 +158,18 @@ class BuildCreatorView(ft.Column):
         )
 
     def _build_parts(self) -> ft.Control:
-        rows = []
+        clear_row = ft.Row(
+            [
+                ft.Text("Components", size=14, weight=ft.FontWeight.W_600, expand=True),
+                ft.TextButton(
+                    "Clear All",
+                    icon=ft.Icons.REFRESH_ROUNDED,
+                    on_click=self._on_clear_parts,
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        )
+        rows = [clear_row]
         for cat in catalog.CATEGORIES:
             dd = ft.Dropdown(
                 label=catalog.CATEGORY_LABELS[cat],
@@ -360,6 +371,13 @@ class BuildCreatorView(ft.Column):
 
     def _on_select(self, category: str, part_id: str | None):
         self.selected[category] = catalog.find_part(category, part_id) if part_id else None
+        self._recalculate()
+
+    def _on_clear_parts(self, e):
+        for cat in catalog.CATEGORIES:
+            self.selected[cat] = None
+            self.dropdowns[cat].value = None
+        self._set_reasoning(None)
         self._recalculate()
 
     def _on_perf_change(self, attr: str, value):
