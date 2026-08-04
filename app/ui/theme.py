@@ -14,6 +14,17 @@ SUCCESS = "#3DDC97"
 WARNING = "#FFB454"
 ERROR = "#FF5C5C"
 
+CATEGORY_ICONS = {
+    "cpu": ft.Icons.MEMORY_ROUNDED,
+    "motherboard": ft.Icons.DEVELOPER_BOARD_ROUNDED,
+    "ram": ft.Icons.VIEW_MODULE_ROUNDED,
+    "gpu": ft.Icons.VIDEO_SETTINGS_ROUNDED,
+    "storage": ft.Icons.STORAGE_ROUNDED,
+    "psu": ft.Icons.BOLT_ROUNDED,
+    "case": ft.Icons.INVENTORY_2_ROUNDED,
+    "cooler": ft.Icons.AC_UNIT_ROUNDED,
+}
+
 # Mutable module-level accent state — read by other UI modules as theme.ACCENT /
 # theme.ACCENT_SOFT at call time, so init_accent() must run before any screens build.
 current_accent: accent_themes.AccentTheme = accent_themes.DEFAULT_ACCENT

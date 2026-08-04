@@ -15,7 +15,7 @@ GREEN_BLACK = AccentTheme(id="green_black", label="Black & Green", primary="#3DD
 CYAN_PURPLE = AccentTheme(id="cyan_purple", label="Cyan & Purple", primary="#7C5CFF", secondary="#22D3EE")
 
 ACCENT_THEMES = [RED_BLACK, GREEN_BLACK, CYAN_PURPLE]
-DEFAULT_ACCENT = CYAN_PURPLE
+DEFAULT_ACCENT = RED_BLACK
 
 
 def find_accent(accent_id: str) -> AccentTheme:

@@ -12,8 +12,8 @@ from ui.dashboard import build_dashboard
 from ui.build_creator import BuildCreatorView
 from ui.my_builds import MyBuildsView
 from ui.profile_view import build_profile_view
-from ui.stub_view import build_stub_view
 from ui.ai_view import AIArchitectView
+from ui.prices_view import PricesView
 from ui.phone_frame import wrap_in_phone_frame
 
 PHONE_WIDTH = 402
@@ -98,12 +98,9 @@ async def main(page: ft.Page):
         nav.selected_index = 2
         page.update()
 
-    def show_prices_stub():
-        body.content = build_stub_view(
-            "Price Tracking",
-            "Track prices, set alerts, and catch drops.\nComing in a future update.",
-            ft.Icons.TRENDING_DOWN_ROUNDED,
-        )
+    def show_prices():
+        prices_view.refresh()
+        body.content = prices_view
         nav.selected_index = 3
         page.update()
 
@@ -115,8 +112,9 @@ async def main(page: ft.Page):
     build_creator_view: BuildCreatorView | None = None
     my_builds_view = MyBuildsView(page)
     ai_view = AIArchitectView(page, on_build_generated=open_ai_build_in_creator)
+    prices_view = PricesView(page)
 
-    views = [show_dashboard, show_build_creator, show_ai_architect, show_prices_stub, show_profile]
+    views = [show_dashboard, show_build_creator, show_ai_architect, show_prices, show_profile]
 
     def set_index(i: int):
         views[i]()

@@ -9,7 +9,7 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 | Epic 3 — Build Creator Redesign + Build Score Engine | Phase 2 + Phase 4 (scoring) | ✅ Done |
 | Epic 4 — AI Architect | Phase 3 | ✅ Done |
 | Epic 5 — Performance Estimators (FPS, bottleneck analysis) | Phase 4 | ✅ Done |
-| Epic 6 — Price Tracking | Phase 6 | Backlog |
+| Epic 6 — Price Tracking | Phase 6 | ✅ Done |
 | Epic 7 — Community & Cloud Sync | Phase 5 | Backlog |
 | Epic 8 — 3D Workbench / AR | Phase 7 | Backlog |
 
@@ -41,3 +41,9 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 - FPS estimator (`app/core/performance.py`): 8 curated games, resolution/settings/ray-tracing/upscaling/frame-gen controls, heuristic FPS calibrated off the same GPU/CPU gaming indices as the Epic 3 scoring engine (`scoring.gpu_gaming_index`/`cpu_gaming_index`, extracted for reuse)
 - Bottleneck analysis: flags GPU/CPU imbalance and low RAM with why/impact/fix explanations, distinct from `compatibility.py`'s "does it work" checks
 - New third tab ("Performance") in Build Creator, alongside Overview and Parts
+
+## Epic 6 — Price Tracking ✅
+- Simulated price history (`app/core/price_history.py`): deterministic random walk per part ID (no real retail API), Current/Lowest/Highest/Average stats + a "Price Drop" indicator
+- Wishlist persisted in the existing SQLite DB (`app/core/storage.py`: `wishlist` table + CRUD)
+- New Prices screen (`app/ui/prices_view.py`) with a Wishlist / Browse All toggle — star any of the 35 catalog parts to track it
+- `CATEGORY_ICONS` moved from `build_creator.py` to `ui/theme.py` so both screens share one source of truth

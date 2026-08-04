@@ -71,27 +71,32 @@ def build_dashboard(
     builds = storage.list_builds()
     recent_builds = builds[:3]
 
-    header_row = ft.Row(
+    header_row = ft.Stack(
         [
-            ft.Row(
-                [
-                    ft.Text("PC ", size=18, weight=ft.FontWeight.BOLD, color=theme.TEXT_PRIMARY),
-                    ft.Text("ARCHITECT", size=18, weight=ft.FontWeight.BOLD, color=theme.ACCENT),
-                ],
-                spacing=0,
+            ft.Container(
+                margin=ft.Margin.only(top=-22, left=0),
+                alignment=ft.Alignment.CENTER_LEFT,
+                content=ft.Image(src="header.png", fit=ft.BoxFit.CONTAIN, height=50),
             ),
-            ft.Icon(ft.Icons.NOTIFICATIONS_NONE_ROUNDED, color=theme.TEXT_MUTED),
+            ft.Container(
+                top=0,
+                right=0,
+                content=ft.Icon(ft.Icons.NOTIFICATIONS_NONE_ROUNDED, color=theme.TEXT_MUTED, size=20),
+            ),
         ],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        height=68,
     )
 
-    greeting_text = ft.Text(profile.greeting() + " \U0001F44B", size=14, color=theme.TEXT_MUTED)
+    greeting_text = ft.Text(
+        profile.greeting() + " \U0001F44B", size=14, color=theme.TEXT_MUTED, text_align=ft.TextAlign.CENTER
+    )
 
     headline = ft.Text(
         spans=[
             ft.TextSpan("Let's build something ", ft.TextStyle(size=24, weight=ft.FontWeight.BOLD, color=theme.TEXT_PRIMARY)),
             ft.TextSpan("amazing.", ft.TextStyle(size=24, weight=ft.FontWeight.BOLD, color=theme.ACCENT)),
         ],
+        text_align=ft.TextAlign.CENTER,
     )
 
     ai_card = ft.Container(
@@ -168,15 +173,21 @@ def build_dashboard(
         )
     else:
         builds_list = theme.card(
-            ft.Text("No saved builds yet. Start one below.", color=theme.TEXT_MUTED)
+            ft.Row(
+                [ft.Text("No saved builds yet. Start one below.", color=theme.TEXT_MUTED, text_align=ft.TextAlign.CENTER)],
+                alignment=ft.MainAxisAlignment.CENTER,
+            )
         )
 
     return ft.Column(
         [
-            header_row,
-            greeting_text,
-            headline,
-            ft.Container(height=4),
+            ft.Container(height=16),
+            ft.Column(
+                [header_row, greeting_text, headline],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=12,
+            ),
+            ft.Container(height=12),
             ai_card,
             ft.Container(height=8),
             filter_row,

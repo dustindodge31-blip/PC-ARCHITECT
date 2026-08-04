@@ -6,16 +6,7 @@ from core import catalog, compatibility, storage, scoring, performance
 from ui import theme
 from ui.score_widgets import score_badge, score_bar, star_row
 
-CATEGORY_ICONS = {
-    "cpu": ft.Icons.MEMORY_ROUNDED,
-    "motherboard": ft.Icons.DEVELOPER_BOARD_ROUNDED,
-    "ram": ft.Icons.VIEW_MODULE_ROUNDED,
-    "gpu": ft.Icons.VIDEO_SETTINGS_ROUNDED,
-    "storage": ft.Icons.STORAGE_ROUNDED,
-    "psu": ft.Icons.BOLT_ROUNDED,
-    "case": ft.Icons.INVENTORY_2_ROUNDED,
-    "cooler": ft.Icons.AC_UNIT_ROUNDED,
-}
+CATEGORY_ICONS = theme.CATEGORY_ICONS
 
 
 class BuildCreatorView(ft.Column):

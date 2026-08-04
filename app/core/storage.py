@@ -24,6 +24,14 @@ def init_db() -> None:
                 parts_json TEXT NOT NULL
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS wishlist (
+                category TEXT NOT NULL,
+                part_id TEXT NOT NULL,
+                added_at TEXT NOT NULL,
+                PRIMARY KEY (category, part_id)
+            )
+        """)
 
 
 def save_build(name: str, parts: dict, build_id: int | None = None) -> int:
@@ -60,3 +68,33 @@ def get_build(build_id: int) -> dict | None:
 def delete_build(build_id: int) -> None:
     with _connect() as conn:
         conn.execute("DELETE FROM builds WHERE id = ?", (build_id,))
+
+
+def add_to_wishlist(category: str, part_id: str) -> None:
+    now = datetime.now(timezone.utc).isoformat()
+    with _connect() as conn:
+        conn.execute(
+            "INSERT OR IGNORE INTO wishlist (category, part_id, added_at) VALUES (?, ?, ?)",
+            (category, part_id, now),
+        )
+
+
+def remove_from_wishlist(category: str, part_id: str) -> None:
+    with _connect() as conn:
+        conn.execute(
+            "DELETE FROM wishlist WHERE category = ? AND part_id = ?", (category, part_id)
+        )
+
+
+def list_wishlist() -> list[dict]:
+    with _connect() as conn:
+        rows = conn.execute("SELECT * FROM wishlist ORDER BY added_at DESC").fetchall()
+        return [dict(row) for row in rows]
+
+
+def is_wishlisted(category: str, part_id: str) -> bool:
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT 1 FROM wishlist WHERE category = ? AND part_id = ?", (category, part_id)
+        ).fetchone()
+        return row is not None
