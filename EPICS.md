@@ -7,7 +7,7 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 | Epic 1 — Foundation & Desktop Test Harness | Phase 1 | ✅ Done |
 | Epic 2 — Visual Identity & Home Dashboard | Phase 1 (UI) | ✅ Done |
 | Epic 3 — Build Creator Redesign + Build Score Engine | Phase 2 + Phase 4 (scoring) | ✅ Done |
-| Epic 4 — AI Architect | Phase 3 | Backlog (needs LLM integration decision) |
+| Epic 4 — AI Architect | Phase 3 | ✅ Done |
 | Epic 5 — Performance Estimators (FPS, bottleneck analysis) | Phase 4 | Backlog |
 | Epic 6 — Price Tracking | Phase 6 | Backlog |
 | Epic 7 — Community & Cloud Sync | Phase 5 | Backlog |
@@ -30,3 +30,9 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 - Shared score widgets: circular badge, meter bar, star row (`app/ui/score_widgets.py`)
 - Build Creator restructured into Overview (thumbnail, score badge, tier, meters) / Parts (icon-led picker rows) tabs with a persistent bottom bar (compatibility, price, power, save)
 - Dashboard build cards now use the real scoring engine instead of Epic 2's placeholder
+
+## Epic 4 — AI Architect ✅
+- Gemini-powered build generation (`app/core/ai_architect.py`): Gemini picks real catalog part IDs only (structured JSON output, schema-constrained to actual IDs) and writes a short reasoning blurb — never invents specs/prices. Our own compatibility/scoring engines compute everything else.
+- Single-shot AI Architect screen (`app/ui/ai_view.py`): prompt box, Generate button, loading state, inline error handling (bad key, network, parse failures)
+- Results hand off into the existing Build Creator via a new `load_from_parts()` (`app/ui/build_creator.py`), with the AI's reasoning shown in a dismissible card on the Overview tab
+- Gemini API key lives in the project's local `.env` (gitignored); model is `gemini-2.5-flash`, configurable via `GEMINI_MODEL`

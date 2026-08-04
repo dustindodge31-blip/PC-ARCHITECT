@@ -8,3 +8,4 @@ app/data/app_settings.json
 .DS_Store
 build/
 storage/
+.env

@@ -13,6 +13,7 @@ from ui.build_creator import BuildCreatorView
 from ui.my_builds import MyBuildsView
 from ui.profile_view import build_profile_view
 from ui.stub_view import build_stub_view
+from ui.ai_view import AIArchitectView
 from ui.phone_frame import wrap_in_phone_frame
 
 PHONE_WIDTH = 402
@@ -60,6 +61,11 @@ async def main(page: ft.Page):
         build_creator_view.load_build(row)
         page.update()
 
+    def open_ai_build_in_creator(name, selection, reasoning):
+        show_build_creator()
+        build_creator_view.load_from_parts(name, selection, reasoning)
+        page.update()
+
     def show_dashboard():
         body.content = build_dashboard(
             page,
@@ -87,12 +93,8 @@ async def main(page: ft.Page):
         nav.selected_index = 1
         page.update()
 
-    def show_ai_stub():
-        body.content = build_stub_view(
-            "AI Architect",
-            "Describe your dream PC and get a full reasoned build.\nComing in a future update.",
-            ft.Icons.AUTO_AWESOME_ROUNDED,
-        )
+    def show_ai_architect():
+        body.content = ai_view
         nav.selected_index = 2
         page.update()
 
@@ -112,8 +114,9 @@ async def main(page: ft.Page):
 
     build_creator_view: BuildCreatorView | None = None
     my_builds_view = MyBuildsView(page)
+    ai_view = AIArchitectView(page, on_build_generated=open_ai_build_in_creator)
 
-    views = [show_dashboard, show_build_creator, show_ai_stub, show_prices_stub, show_profile]
+    views = [show_dashboard, show_build_creator, show_ai_architect, show_prices_stub, show_profile]
 
     def set_index(i: int):
         views[i]()

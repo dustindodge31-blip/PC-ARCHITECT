@@ -50,6 +50,7 @@ class BuildCreatorView(ft.Column):
         self.stars_slot = ft.Container()
         self.tier_text = ft.Text("", size=13, weight=ft.FontWeight.BOLD, color=theme.TEXT_MUTED)
         self.score_bars_column = ft.Column(spacing=12)
+        self.reasoning_card = ft.Container(visible=False)
 
         self.overview_tab = ft.Container(visible=True, content=self._build_overview())
         self.parts_tab = ft.Container(visible=False, content=self._build_parts())
@@ -125,6 +126,7 @@ class BuildCreatorView(ft.Column):
 
         return ft.Column(
             [
+                self.reasoning_card,
                 thumbnail,
                 score_header,
                 ft.Divider(color=theme.BORDER),
@@ -277,4 +279,44 @@ class BuildCreatorView(ft.Column):
             part_id = selection_ids.get(cat)
             self.selected[cat] = catalog.find_part(cat, part_id) if part_id else None
             self.dropdowns[cat].value = part_id
+        self._set_reasoning(None)
         self._recalculate()
+
+    def load_from_parts(self, name: str, parts: dict, reasoning: str | None = None):
+        """Loads an unsaved build (e.g. from AI Architect) — not yet in storage."""
+        self.build_id = None
+        self.build_name = name
+        self.name_field.value = name
+        for cat in catalog.CATEGORIES:
+            part = parts.get(cat)
+            self.selected[cat] = part
+            self.dropdowns[cat].value = part["id"] if part else None
+        self._set_reasoning(reasoning)
+        self._set_tab(0)
+        self._recalculate()
+
+    def _set_reasoning(self, reasoning: str | None):
+        if reasoning:
+            self.reasoning_card.visible = True
+            self.reasoning_card.bgcolor = theme.ACCENT_SOFT
+            self.reasoning_card.border_radius = 14
+            self.reasoning_card.padding = 12
+            self.reasoning_card.content = ft.Row(
+                [
+                    ft.Icon(ft.Icons.AUTO_AWESOME_ROUNDED, color=theme.ACCENT, size=18),
+                    ft.Text(reasoning, size=12, color=theme.TEXT_MUTED, expand=True),
+                    ft.IconButton(
+                        icon=ft.Icons.CLOSE_ROUNDED,
+                        icon_size=14,
+                        on_click=lambda e: self._dismiss_reasoning(),
+                    ),
+                ],
+                spacing=8,
+                vertical_alignment=ft.CrossAxisAlignment.START,
+            )
+        else:
+            self.reasoning_card.visible = False
+
+    def _dismiss_reasoning(self):
+        self.reasoning_card.visible = False
+        self._safe_update()
