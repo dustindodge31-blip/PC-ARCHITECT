@@ -25,6 +25,8 @@ def _log_uncaught_exception(exc_type, exc_value, exc_tb):
 
 sys.excepthook = _log_uncaught_exception
 
+import asyncio
+
 import flet as ft
 
 from core import storage, window_state
@@ -176,6 +178,13 @@ async def main(page: ft.Page):
         ],
     )
 
+    nav.visible = False
+    body.content = ft.Container(
+        expand=True,
+        alignment=ft.Alignment.CENTER,
+        content=ft.Image(src="splash_logo.png", width=280, fit=ft.BoxFit.CONTAIN),
+    )
+
     page.add(
         wrap_in_phone_frame(
             page,
@@ -183,6 +192,8 @@ async def main(page: ft.Page):
         )
     )
 
+    await asyncio.sleep(1.2)
+    nav.visible = True
     show_dashboard()
 
 

@@ -26,16 +26,19 @@ class ProfileView(ft.Column):
 
         self.controls = [
             ft.Row([ft.Text("Profile", size=26, weight=ft.FontWeight.BOLD)], alignment=ft.MainAxisAlignment.CENTER),
-            theme.card(
-                ft.Column(
-                    [
-                        ft.Text("How PC Architect greets you", color=theme.TEXT_MUTED, size=12, text_align=ft.TextAlign.CENTER),
-                        self.name_field,
-                        ft.ElevatedButton("Save", icon=ft.Icons.CHECK_ROUNDED, on_click=self._save_name),
-                    ],
-                    spacing=12,
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                )
+            ft.Container(
+                margin=ft.Margin.only(left=6),
+                content=theme.card(
+                    ft.Column(
+                        [
+                            ft.Text("How PC Architect greets you", color=theme.TEXT_MUTED, size=12, text_align=ft.TextAlign.CENTER),
+                            self.name_field,
+                            ft.ElevatedButton("Save", icon=ft.Icons.CHECK_ROUNDED, on_click=self._save_name),
+                        ],
+                        spacing=12,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    )
+                ),
             ),
             theme.card(self.auth_section),
         ]
