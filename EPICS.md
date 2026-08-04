@@ -10,7 +10,7 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 | Epic 4 — AI Architect | Phase 3 | ✅ Done |
 | Epic 5 — Performance Estimators (FPS, bottleneck analysis) | Phase 4 | ✅ Done |
 | Epic 6 — Price Tracking | Phase 6 | ✅ Done |
-| Epic 7 — Community & Cloud Sync | Phase 5 | Backlog |
+| Epic 7 — Community & Cloud Sync | Phase 5 | ✅ Done |
 | Epic 8 — 3D Workbench / AR | Phase 7 | Backlog |
 
 ## Epic 1 — Foundation & Desktop Test Harness ✅
@@ -47,3 +47,11 @@ Tracks implementation work as Epics mapped to the original Master Vision Documen
 - Wishlist persisted in the existing SQLite DB (`app/core/storage.py`: `wishlist` table + CRUD)
 - New Prices screen (`app/ui/prices_view.py`) with a Wishlist / Browse All toggle — star any of the 35 catalog parts to track it
 - `CATEGORY_ICONS` moved from `build_creator.py` to `ui/theme.py` so both screens share one source of truth
+
+## Epic 7 — Community & Cloud Sync ✅
+- Real backend: Supabase (Postgres + auth), scoped to auth + publish/browse + favorite for v1 (comments/following/contests deferred)
+- Schema in `supabase_schema.sql` (run by the user in their Supabase SQL Editor): `community_builds` + `favorites` tables, RLS so anyone can read the public feed but only the owner can publish/favorite as themselves
+- `app/core/community.py`: sign up/in/out, publish a local build, list the feed with favorite counts, toggle favorite — all against the real project
+- `app/core/community_session.py`: persists the Supabase session locally (gitignored) so login survives app restarts
+- `app/ui/community_view.py` (new) and `app/ui/profile_view.py` (now a stateful `ProfileView` with an auth section) — reached from Profile's "Browse Community" button, no dedicated nav tab (same pattern as My Builds/Performance)
+- Credentials in `.env` as `SUPABASE_URL` / `SUPABASE_ANON_KEY` (the anon/publishable key — safe for client apps, respects RLS); verified end-to-end against the live project (sign-up, publish, feed, favorite toggle) before shipping

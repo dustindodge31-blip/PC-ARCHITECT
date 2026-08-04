@@ -5,6 +5,7 @@ venv/
 app/data/builds.db
 app/data/window_state.json
 app/data/app_settings.json
+app/data/community_session.json
 .DS_Store
 build/
 storage/

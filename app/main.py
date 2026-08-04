@@ -11,9 +11,10 @@ from ui import theme
 from ui.dashboard import build_dashboard
 from ui.build_creator import BuildCreatorView
 from ui.my_builds import MyBuildsView
-from ui.profile_view import build_profile_view
+from ui.profile_view import ProfileView
 from ui.ai_view import AIArchitectView
 from ui.prices_view import PricesView
+from ui.community_view import CommunityView
 from ui.phone_frame import wrap_in_phone_frame
 
 PHONE_WIDTH = 402
@@ -104,8 +105,15 @@ async def main(page: ft.Page):
         nav.selected_index = 3
         page.update()
 
+    def show_community():
+        community_view.refresh()
+        body.content = community_view
+        nav.selected_index = 4
+        page.update()
+
     def show_profile():
-        body.content = build_profile_view(page, on_name_saved=lambda: None)
+        profile_view.refresh()
+        body.content = profile_view
         nav.selected_index = 4
         page.update()
 
@@ -113,6 +121,8 @@ async def main(page: ft.Page):
     my_builds_view = MyBuildsView(page)
     ai_view = AIArchitectView(page, on_build_generated=open_ai_build_in_creator)
     prices_view = PricesView(page)
+    community_view = CommunityView(page)
+    profile_view = ProfileView(page, on_name_saved=lambda: None, on_browse_community=show_community)
 
     views = [show_dashboard, show_build_creator, show_ai_architect, show_prices, show_profile]
 
