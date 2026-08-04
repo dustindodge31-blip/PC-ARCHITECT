@@ -10,7 +10,7 @@ class AccentTheme:
     secondary: str
 
 
-RED_BLACK = AccentTheme(id="red_black", label="Red & Black", primary="#FF3B3B", secondary="#8C1A1A")
+RED_BLACK = AccentTheme(id="red_black", label="Red & Black", primary="#D10007", secondary="#8C1A1A")
 GREEN_BLACK = AccentTheme(id="green_black", label="Black & Green", primary="#3DDC64", secondary="#1F8A3C")
 CYAN_PURPLE = AccentTheme(id="cyan_purple", label="Cyan & Purple", primary="#7C5CFF", secondary="#22D3EE")
 

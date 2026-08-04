@@ -6,6 +6,7 @@ app/data/builds.db
 app/data/window_state.json
 app/data/app_settings.json
 app/data/community_session.json
+app/data/crash_log.txt
 .DS_Store
 build/
 storage/

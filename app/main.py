@@ -1,8 +1,29 @@
 """PC Architect — Flet desktop entry point (phone-sized window for Android preview)."""
 import sys
+import traceback
+from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+CRASH_LOG_PATH = Path(__file__).resolve().parent / "data" / "crash_log.txt"
+
+if sys.stderr is None:
+    # Running under pythonw (desktop shortcut) — no console at all, so both stray
+    # prints and Flet's own internal error logging would otherwise vanish silently.
+    CRASH_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    _log_file = open(CRASH_LOG_PATH, "a", encoding="utf-8")
+    sys.stdout = _log_file
+    sys.stderr = _log_file
+
+
+def _log_uncaught_exception(exc_type, exc_value, exc_tb):
+    with open(CRASH_LOG_PATH, "a", encoding="utf-8") as f:
+        f.write(f"\n--- {datetime.now(timezone.utc).isoformat()} ---\n")
+        traceback.print_exception(exc_type, exc_value, exc_tb, file=f)
+
+
+sys.excepthook = _log_uncaught_exception
 
 import flet as ft
 
@@ -26,6 +47,7 @@ async def main(page: ft.Page):
     theme.init_accent()
 
     page.title = "PC Architect"
+    page.window.icon = "icon.ico"
     page.theme_mode = ft.ThemeMode.DARK
     page.theme = theme.build_theme()
     page.bgcolor = ft.Colors.TRANSPARENT
