@@ -11,7 +11,7 @@ def score_color(score: int) -> str:
         return theme.ACCENT
     if score >= 50:
         return theme.WARNING
-    return theme.ERROR
+    return theme.ACCENT
 
 
 def score_badge(score: int, size: int = 44) -> ft.Control:
