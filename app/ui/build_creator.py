@@ -294,7 +294,7 @@ class BuildCreatorView(ft.Column):
         self.webview_debug_text = ft.Text("webview: not loaded yet", size=10, color=theme.TEXT_MUTED, selectable=True)
 
         self.workbench_webview = fw.WebView(
-            url=asset_server.url_for("debug_hello.html"),
+            url=asset_server.url_for("case_viewer.html"),
             expand=True,
             on_page_started=lambda e: self._webview_debug_log(f"page started: {e.data}"),
             on_page_ended=lambda e: self._webview_debug_log(f"page ended: {e.data}"),
