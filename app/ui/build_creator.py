@@ -281,8 +281,10 @@ class BuildCreatorView(ft.Column):
             content=fw.WebView(
                 url=asset_server.url_for("case_viewer.html"),
                 expand=True,
+                on_page_started=lambda e: print(f"[case_viewer] page started: {e.data}"),
+                on_page_ended=lambda e: print(f"[case_viewer] page ended: {e.data}"),
                 on_console_message=lambda e: print(f"[case_viewer console] {e.message}"),
-                on_web_resource_error=lambda e: print(f"[case_viewer resource error] {e}"),
+                on_web_resource_error=lambda e: print(f"[case_viewer resource error] {e.data}"),
             ),
         )
 

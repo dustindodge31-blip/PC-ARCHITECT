@@ -20,6 +20,12 @@
 <div id="credit">Model by Meilov (Sketchfab)</div>
 
 <script>
+console.log('case_viewer: inline script starting');
+window.onerror = function(msg, src, line, col, err) {
+  console.error('case_viewer window.onerror: ' + msg + ' @ ' + src + ':' + line);
+};
+console.log('case_viewer: THREE defined? ' + (typeof THREE !== 'undefined'));
+
 const container = document.getElementById('viewer');
 
 const scene = new THREE.Scene();
