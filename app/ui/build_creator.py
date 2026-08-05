@@ -78,9 +78,8 @@ class BuildCreatorView(ft.Column):
     async def _enable_webview_javascript(self):
         try:
             await self.workbench_webview.set_javascript_mode(fw.JavaScriptMode.UNRESTRICTED)
-            self._webview_debug_log("javascript mode: unrestricted (set)")
         except Exception as ex:
-            self._webview_debug_log(f"set_javascript_mode failed: {ex}")
+            print(f"[workbench] set_javascript_mode failed: {ex}")
 
     # ---------- layout ----------
 
@@ -283,26 +282,14 @@ class BuildCreatorView(ft.Column):
             spacing=14,
         )
 
-    def _webview_debug_log(self, line: str) -> None:
-        current = self.webview_debug_text.value or ""
-        lines = (current.split("\n") if current else [])[-5:]
-        lines.append(line)
-        self.webview_debug_text.value = "\n".join(lines)
-        self.webview_debug_text.update()
-
     def _build_workbench(self) -> ft.Control:
-        self.webview_debug_text = ft.Text("webview: not loaded yet", size=10, color=theme.TEXT_MUTED, selectable=True)
-
         self.workbench_webview = fw.WebView(
             url=asset_server.url_for("case_viewer.html"),
             expand=True,
-            on_page_started=lambda e: self._webview_debug_log(f"page started: {e.data}"),
-            on_page_ended=lambda e: self._webview_debug_log(f"page ended: {e.data}"),
-            on_console_message=lambda e: self._webview_debug_log(f"console: {e.message}"),
-            on_web_resource_error=lambda e: self._webview_debug_log(f"resource error: {e.data}"),
+            on_web_resource_error=lambda e: print(f"[case_viewer resource error] {e.data}"),
         )
         case_viewer = ft.Container(
-            height=220,
+            height=300,
             border_radius=16,
             bgcolor=theme.SURFACE_ALT,
             border=ft.Border.all(2, theme.BORDER),
@@ -318,12 +305,6 @@ class BuildCreatorView(ft.Column):
                     color=theme.TEXT_MUTED,
                 ),
                 case_viewer,
-                ft.Container(
-                    content=self.webview_debug_text,
-                    padding=8,
-                    bgcolor=theme.SURFACE_ALT,
-                    border_radius=8,
-                ),
                 ft.Row([self.workbench_progress_text], alignment=ft.MainAxisAlignment.CENTER),
                 self.workbench_nodes_column,
             ],
