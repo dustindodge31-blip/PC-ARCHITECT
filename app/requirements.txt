@@ -1,0 +1,4 @@
+flet>=0.86.0
+python-dotenv>=1.0.0
+supabase>=2.31.0
+flet-webview>=0.86.0
