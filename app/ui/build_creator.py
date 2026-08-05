@@ -78,8 +78,15 @@ class BuildCreatorView(ft.Column):
                 self._set_tab(index)
 
             container = ft.Container(
-                content=ft.Text(label, size=13, weight=ft.FontWeight.W_600),
-                padding=ft.Padding.symmetric(vertical=8, horizontal=0),
+                content=ft.Text(
+                    label,
+                    size=12,
+                    weight=ft.FontWeight.W_600,
+                    max_lines=1,
+                    overflow=ft.TextOverflow.ELLIPSIS,
+                    text_align=ft.TextAlign.CENTER,
+                ),
+                padding=ft.Padding.symmetric(vertical=8, horizontal=2),
                 alignment=ft.Alignment.CENTER,
                 expand=True,
                 border_radius=12,
@@ -274,6 +281,8 @@ class BuildCreatorView(ft.Column):
             content=fw.WebView(
                 url=asset_server.url_for("case_viewer.html"),
                 expand=True,
+                on_console_message=lambda e: print(f"[case_viewer console] {e.message}"),
+                on_web_resource_error=lambda e: print(f"[case_viewer resource error] {e}"),
             ),
         )
 
