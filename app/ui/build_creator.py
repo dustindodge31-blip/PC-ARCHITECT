@@ -143,6 +143,17 @@ class BuildCreatorView(ft.Column):
         self.workbench_tab.visible = index == 3
         self._style_toggle()
         self._safe_update()
+        if index == 3 and self.workbench_webview is not None:
+            # Android's WebView surface doesn't always repaint after its
+            # container is hidden/shown via visibility toggling -- reload
+            # to force a fresh render instead of a blank surface.
+            self.page.run_task(self._reload_workbench_webview)
+
+    async def _reload_workbench_webview(self):
+        try:
+            await self.workbench_webview.reload()
+        except Exception as ex:
+            print(f"[workbench] reload failed: {ex}")
 
     def _build_overview(self) -> ft.Control:
         thumbnail = ft.Container(
