@@ -143,17 +143,14 @@ class BuildCreatorView(ft.Column):
         self.workbench_tab.visible = index == 3
         self._style_toggle()
         self._safe_update()
-        if index == 3 and self.workbench_webview is not None:
-            # Android's WebView surface doesn't always repaint after its
-            # container is hidden/shown via visibility toggling -- reload
-            # to force a fresh render instead of a blank surface.
-            self.page.run_task(self._reload_workbench_webview)
-
-    async def _reload_workbench_webview(self):
-        try:
-            await self.workbench_webview.reload()
-        except Exception as ex:
-            print(f"[workbench] reload failed: {ex}")
+        if index == 3:
+            # Android's WebView surface doesn't reliably repaint after its
+            # container is hidden/shown via visibility toggling -- reload()
+            # on the same instance wasn't enough, so fully recreate the
+            # control to force Android to dispose and rebuild the native view.
+            self.workbench_case_viewer.content = self._new_workbench_webview()
+            self.workbench_case_viewer.update()
+            self.page.run_task(self._enable_webview_javascript)
 
     def _build_overview(self) -> ft.Control:
         thumbnail = ft.Container(
@@ -293,19 +290,22 @@ class BuildCreatorView(ft.Column):
             spacing=14,
         )
 
-    def _build_workbench(self) -> ft.Control:
+    def _new_workbench_webview(self) -> fw.WebView:
         self.workbench_webview = fw.WebView(
             url=asset_server.url_for("case_viewer.html"),
             expand=True,
             on_web_resource_error=lambda e: print(f"[case_viewer resource error] {e.data}"),
         )
-        case_viewer = ft.Container(
+        return self.workbench_webview
+
+    def _build_workbench(self) -> ft.Control:
+        self.workbench_case_viewer = ft.Container(
             height=300,
             border_radius=16,
             bgcolor=theme.SURFACE_ALT,
             border=ft.Border.all(2, theme.BORDER),
             clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
-            content=self.workbench_webview,
+            content=self._new_workbench_webview(),
         )
 
         return ft.Column(
@@ -315,7 +315,7 @@ class BuildCreatorView(ft.Column):
                     size=12,
                     color=theme.TEXT_MUTED,
                 ),
-                case_viewer,
+                self.workbench_case_viewer,
                 ft.Row([self.workbench_progress_text], alignment=ft.MainAxisAlignment.CENTER),
                 self.workbench_nodes_column,
             ],
