@@ -34,3 +34,10 @@ def find_part(category: str, part_id: str) -> dict | None:
         if part["id"] == part_id:
             return part
     return None
+
+
+def product_image_src(part_id: str) -> str:
+    """Relative asset path for a part's AI-generated product image
+    (see scripts/generate_product_images.py). Not guaranteed to exist --
+    callers should pass an `error_content` fallback to ft.Image."""
+    return f"products/{part_id}.png"

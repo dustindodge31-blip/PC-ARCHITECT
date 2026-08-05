@@ -153,13 +153,15 @@ class BuildCreatorView(ft.Column):
             self.page.run_task(self._enable_webview_javascript)
 
     def _build_overview(self) -> ft.Control:
-        thumbnail = ft.Container(
+        self.overview_thumbnail = ft.Container(
             height=140,
             border_radius=16,
             bgcolor=theme.SURFACE_ALT,
             alignment=ft.Alignment.CENTER,
+            clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
             content=ft.Icon(ft.Icons.DEVELOPER_BOARD_ROUNDED, color=theme.TEXT_MUTED, size=56),
         )
+        thumbnail = self.overview_thumbnail
 
         score_header = ft.Row(
             [
@@ -334,7 +336,16 @@ class BuildCreatorView(ft.Column):
                         border_radius=10,
                         bgcolor=theme.ACCENT_SOFT if filled else theme.SURFACE_ALT,
                         alignment=ft.Alignment.CENTER,
-                        content=ft.Icon(theme.CATEGORY_ICONS[category], size=18, color=icon_color),
+                        clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
+                        content=(
+                            ft.Image(
+                                src=catalog.product_image_src(part["id"]),
+                                fit=ft.BoxFit.COVER,
+                                error_content=ft.Icon(theme.CATEGORY_ICONS[category], size=18, color=icon_color),
+                            )
+                            if filled
+                            else ft.Icon(theme.CATEGORY_ICONS[category], size=18, color=icon_color)
+                        ),
                     ),
                     ft.Column(
                         [
@@ -414,7 +425,21 @@ class BuildCreatorView(ft.Column):
         self._recalculate_performance()
         self._safe_update()
 
+    def _update_thumbnail(self):
+        hero = self.selected.get("gpu") or next((p for p in self.selected.values() if p), None)
+        if hero:
+            self.overview_thumbnail.content = ft.Image(
+                src=catalog.product_image_src(hero["id"]),
+                fit=ft.BoxFit.CONTAIN,
+                error_content=ft.Icon(ft.Icons.DEVELOPER_BOARD_ROUNDED, color=theme.TEXT_MUTED, size=56),
+            )
+        else:
+            self.overview_thumbnail.content = ft.Icon(
+                ft.Icons.DEVELOPER_BOARD_ROUNDED, color=theme.TEXT_MUTED, size=56
+            )
+
     def _recalculate(self):
+        self._update_thumbnail()
         total = compatibility.total_price(self.selected)
         draw = compatibility.estimate_power_draw(self.selected)
         issues = compatibility.check_build(self.selected)

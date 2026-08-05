@@ -26,13 +26,20 @@ def _build_card(row: dict, on_open_build, on_long_press) -> ft.Control:
             spec_bits.append(part["name"])
     spec_line = "  ·  ".join(spec_bits) if spec_bits else "No parts selected yet"
 
+    hero = parts.get("gpu") or next((p for p in parts.values() if p), None)
+    fallback_icon = ft.Icon(ft.Icons.DEVELOPER_BOARD_ROUNDED, color=theme.TEXT_MUTED, size=26)
     thumbnail = ft.Container(
         width=52,
         height=52,
         border_radius=12,
         bgcolor=theme.SURFACE_ALT,
         alignment=ft.Alignment.CENTER,
-        content=ft.Icon(ft.Icons.DEVELOPER_BOARD_ROUNDED, color=theme.TEXT_MUTED, size=26),
+        clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
+        content=(
+            ft.Image(src=catalog.product_image_src(hero["id"]), fit=ft.BoxFit.COVER, error_content=fallback_icon)
+            if hero
+            else fallback_icon
+        ),
     )
 
     card = ft.Container(
