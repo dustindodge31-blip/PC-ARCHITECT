@@ -5,6 +5,7 @@ import functools
 import http.server
 import socketserver
 import threading
+import time
 from pathlib import Path
 
 ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
@@ -51,4 +52,6 @@ def start() -> int:
 
 def url_for(relative_path: str) -> str:
     port = start()
-    return f"http://127.0.0.1:{port}/{relative_path.lstrip('/')}"
+    # Cache-bust the entry URL itself in case the WebView still holds an old
+    # cached response from before the no-store headers below existed.
+    return f"http://127.0.0.1:{port}/{relative_path.lstrip('/')}?v={int(time.time())}"
