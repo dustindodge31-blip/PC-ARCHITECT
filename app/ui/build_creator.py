@@ -18,6 +18,7 @@ class BuildCreatorView(ft.Column):
         self.build_id: int | None = None
         self.build_name = "Untitled Build"
         self.selected: dict[str, dict | None] = {c: None for c in catalog.CATEGORIES}
+        self.workbench_webview: fw.WebView | None = None
         self.tab_index = 0
 
         self.dropdowns: dict[str, ft.Dropdown] = {}
@@ -69,6 +70,17 @@ class BuildCreatorView(ft.Column):
 
         self.controls = self._build_layout()
         self._recalculate()
+
+    def did_mount(self):
+        if self.workbench_webview is not None:
+            self.page.run_task(self._enable_webview_javascript)
+
+    async def _enable_webview_javascript(self):
+        try:
+            await self.workbench_webview.set_javascript_mode(fw.JavaScriptMode.UNRESTRICTED)
+            self._webview_debug_log("javascript mode: unrestricted (set)")
+        except Exception as ex:
+            self._webview_debug_log(f"set_javascript_mode failed: {ex}")
 
     # ---------- layout ----------
 
@@ -281,20 +293,21 @@ class BuildCreatorView(ft.Column):
     def _build_workbench(self) -> ft.Control:
         self.webview_debug_text = ft.Text("webview: not loaded yet", size=10, color=theme.TEXT_MUTED, selectable=True)
 
+        self.workbench_webview = fw.WebView(
+            url=asset_server.url_for("debug_hello.html"),
+            expand=True,
+            on_page_started=lambda e: self._webview_debug_log(f"page started: {e.data}"),
+            on_page_ended=lambda e: self._webview_debug_log(f"page ended: {e.data}"),
+            on_console_message=lambda e: self._webview_debug_log(f"console: {e.message}"),
+            on_web_resource_error=lambda e: self._webview_debug_log(f"resource error: {e.data}"),
+        )
         case_viewer = ft.Container(
             height=220,
             border_radius=16,
             bgcolor=theme.SURFACE_ALT,
             border=ft.Border.all(2, theme.BORDER),
             clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
-            content=fw.WebView(
-                url=asset_server.url_for("debug_hello.html"),
-                expand=True,
-                on_page_started=lambda e: self._webview_debug_log(f"page started: {e.data}"),
-                on_page_ended=lambda e: self._webview_debug_log(f"page ended: {e.data}"),
-                on_console_message=lambda e: self._webview_debug_log(f"console: {e.message}"),
-                on_web_resource_error=lambda e: self._webview_debug_log(f"resource error: {e.data}"),
-            ),
+            content=self.workbench_webview,
         )
 
         return ft.Column(
