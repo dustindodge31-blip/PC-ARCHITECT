@@ -44,40 +44,47 @@ PHONE_WIDTH = 402
 PHONE_HEIGHT = 874
 
 
+MOBILE_PLATFORMS = (ft.PagePlatform.ANDROID, ft.PagePlatform.ANDROID_TV, ft.PagePlatform.IOS)
+
+
 async def main(page: ft.Page):
     storage.init_db()
     theme.init_accent()
 
+    is_mobile = page.platform in MOBILE_PLATFORMS
+
     page.title = "PC Architect"
-    page.window.icon = "icon.ico"
     page.theme_mode = ft.ThemeMode.DARK
     page.theme = theme.build_theme()
     page.bgcolor = ft.Colors.TRANSPARENT
     page.padding = 0
 
-    # Phone-shaped, frameless, transparent window so desktop testing feels like a real device.
-    page.window.width = PHONE_WIDTH
-    page.window.height = PHONE_HEIGHT
-    page.window.resizable = False
-    page.window.maximizable = False
-    page.window.frameless = True
-    page.window.bgcolor = ft.Colors.TRANSPARENT
-    page.window.shadow = True
-    page.update()  # flush size before positioning, so center()/left/top see the real dimensions
+    if not is_mobile:
+        # Desktop only: window sizing/position/dragging concepts don't exist on a
+        # real phone -- Android/iOS provide the actual device chrome already.
+        page.window.icon = "icon.ico"
+        page.window.width = PHONE_WIDTH
+        page.window.height = PHONE_HEIGHT
+        page.window.resizable = False
+        page.window.maximizable = False
+        page.window.frameless = True
+        page.window.bgcolor = ft.Colors.TRANSPARENT
+        page.window.shadow = True
+        page.update()  # flush size before positioning, so center()/left/top see the real dimensions
 
-    # Restore last position if we have one, otherwise center on first run.
-    saved_position = window_state.load_position()
-    if saved_position:
-        page.window.left, page.window.top = saved_position
-        page.update()
-    else:
-        await page.window.center()
+        # Restore last position if we have one, otherwise center on first run.
+        saved_position = window_state.load_position()
+        if saved_position:
+            page.window.left, page.window.top = saved_position
+            page.update()
+        else:
+            await page.window.center()
 
-    def on_window_event(e: ft.WindowEvent):
-        if e.type == ft.WindowEventType.MOVED:
-            window_state.save_position(page.window.left, page.window.top)
+        def on_window_event(e: ft.WindowEvent):
+            if e.type == ft.WindowEventType.MOVED:
+                window_state.save_position(page.window.left, page.window.top)
 
-    page.window.on_event = on_window_event
+        page.window.on_event = on_window_event
 
     body = ft.Container(expand=True, padding=20)
 
@@ -185,12 +192,8 @@ async def main(page: ft.Page):
         content=ft.Image(src="splash_logo.png", width=280, fit=ft.BoxFit.CONTAIN),
     )
 
-    page.add(
-        wrap_in_phone_frame(
-            page,
-            ft.Column([body, nav], expand=True, spacing=0),
-        )
-    )
+    content = ft.Column([body, nav], expand=True, spacing=0)
+    page.add(content if is_mobile else wrap_in_phone_frame(page, content))
 
     await asyncio.sleep(1.2)
     nav.visible = True
