@@ -288,7 +288,7 @@ class BuildCreatorView(ft.Column):
             border=ft.Border.all(2, theme.BORDER),
             clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
             content=fw.WebView(
-                url=asset_server.url_for("case_viewer.html"),
+                url=asset_server.url_for("debug_hello.html"),
                 expand=True,
                 on_page_started=lambda e: self._webview_debug_log(f"page started: {e.data}"),
                 on_page_ended=lambda e: self._webview_debug_log(f"page ended: {e.data}"),
