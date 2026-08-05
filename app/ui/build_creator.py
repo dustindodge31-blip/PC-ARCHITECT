@@ -1,8 +1,9 @@
 """Build Creator screen: Overview tab (score + meters) and Parts tab (pickers),
 sharing a persistent bottom bar (compatibility, price, power, save)."""
 import flet as ft
+import flet_webview as fw
 
-from core import catalog, compatibility, storage, scoring, performance
+from core import asset_server, catalog, compatibility, storage, scoring, performance
 from ui import theme
 from ui.score_widgets import score_badge, score_bar, star_row
 
@@ -264,30 +265,27 @@ class BuildCreatorView(ft.Column):
         )
 
     def _build_workbench(self) -> ft.Control:
-        case_outline = ft.Container(
-            height=120,
+        case_viewer = ft.Container(
+            height=220,
             border_radius=16,
             bgcolor=theme.SURFACE_ALT,
             border=ft.Border.all(2, theme.BORDER),
-            alignment=ft.Alignment.CENTER,
-            content=ft.Column(
-                [
-                    ft.Icon(ft.Icons.INVENTORY_2_ROUNDED, color=theme.ACCENT, size=40),
-                    self.workbench_progress_text,
-                ],
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=6,
+            clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
+            content=fw.WebView(
+                url=asset_server.url_for("case_viewer.html"),
+                expand=True,
             ),
         )
 
         return ft.Column(
             [
                 ft.Text(
-                    "A visual map of your build — tap any slot to fill it in the Parts tab.",
+                    "Drag to rotate, scroll to zoom — tap a slot below to fill it in the Parts tab.",
                     size=12,
                     color=theme.TEXT_MUTED,
                 ),
-                case_outline,
+                case_viewer,
+                ft.Row([self.workbench_progress_text], alignment=ft.MainAxisAlignment.CENTER),
                 self.workbench_nodes_column,
             ],
             spacing=16,
