@@ -16,7 +16,10 @@ class PricesView(ft.Column):
         self.list_column = ft.Column(spacing=10)
 
         self.controls = [
-            ft.Text("Prices", size=26, weight=ft.FontWeight.BOLD),
+            ft.Row(
+                [ft.Text("Prices", size=26, weight=ft.FontWeight.BOLD)],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
             self._segmented_toggle(),
             self.list_column,
         ]

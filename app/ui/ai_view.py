@@ -27,7 +27,10 @@ class AIArchitectView(ft.Column):
         self.error_text = ft.Text("", color=theme.ERROR, size=13, visible=False)
 
         self.controls = [
-            ft.Text("AI Architect", size=26, weight=ft.FontWeight.BOLD),
+            ft.Row(
+                [ft.Text("AI Architect", size=26, weight=ft.FontWeight.BOLD)],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
             ft.Text(
                 "Describe what you want and I'll pick real parts for it — reasoning included.",
                 color=theme.TEXT_MUTED,

@@ -398,7 +398,10 @@ class BuildCreatorView(ft.Column):
         )
 
         return [
-            ft.Text("Build Creator", size=26, weight=ft.FontWeight.BOLD),
+            ft.Row(
+                [ft.Text("Build Creator", size=26, weight=ft.FontWeight.BOLD)],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
             self._segmented_toggle(),
             theme.card(ft.Column([self.overview_tab, self.parts_tab, self.performance_tab, self.workbench_tab])),
             bottom_bar,
