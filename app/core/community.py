@@ -4,15 +4,11 @@ see supabase_schema.sql for the tables this expects."""
 import json
 import os
 from dataclasses import dataclass, field
-from pathlib import Path
 
-from dotenv import load_dotenv
 from supabase import create_client
 
 from core import community_session
-
-ENV_PATH = Path(__file__).resolve().parent.parent.parent / ".env"
-load_dotenv(ENV_PATH)
+from core.env import ENV_PATH  # noqa: F401 -- imported for its load_dotenv() side effect
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")

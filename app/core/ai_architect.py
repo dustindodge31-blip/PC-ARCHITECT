@@ -4,15 +4,11 @@ Gemini never invents specs, prices, or performance numbers."""
 import json
 import os
 from dataclasses import dataclass, field
-from pathlib import Path
 
 import httpx
-from dotenv import load_dotenv
 
 from core import catalog
-
-ENV_PATH = Path(__file__).resolve().parent.parent.parent / ".env"
-load_dotenv(ENV_PATH)
+from core.env import ENV_PATH  # noqa: F401 -- imported for its load_dotenv() side effect
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
