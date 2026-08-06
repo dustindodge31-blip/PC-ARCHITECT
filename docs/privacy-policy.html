@@ -19,20 +19,29 @@
 <p>PC Architect is a PC-building app. This page explains what data it collects and why.</p>
 
 <h2>Account &amp; Community features</h2>
-<p>If you create an account to publish builds or browse the community feed, your email address and
-password are sent to <strong>Supabase</strong> (our authentication and database provider) to create
-and verify your account. Passwords are never stored or seen by us in plain text — Supabase handles
-that. Builds you choose to publish, along with your chosen display name, are stored in our Supabase
-database and are visible to other users of the app. Favoriting a build records that action against
-your account.</p>
+<p>An account is required to use AI Architect, publish builds, favorite builds, or report a build —
+browsing the public community feed and building locally do not require one. Creating an account
+sends your email address and password to <strong>Supabase</strong> (our authentication and database
+provider) to create and verify your account. Passwords are never stored or seen by us in plain
+text — Supabase handles that. Builds you choose to publish, along with your chosen display name,
+are stored in our Supabase database and are visible to other users of the app. Favoriting a build
+records that action against your account. Reporting a build sends the build and your account ID to
+us privately — it is not shown to other users.</p>
 <p>You can delete your own published builds at any time from the Community feed. To delete your
 account entirely, contact us using the details below.</p>
 
 <h2>AI Architect feature</h2>
-<p>When you use the AI Architect to describe a build in your own words, that text is sent to
-<strong>Google's Gemini API</strong> to generate a part suggestion. We don't store this text
-ourselves beyond what's needed to display the result to you. Google's own privacy policy governs
-how they handle that request.</p>
+<p>When you use AI Architect to describe a build in your own words, that text is sent to a small
+server function we operate (hosted on Supabase) which forwards it to <strong>Google's Gemini
+API</strong> to generate a part suggestion, then returns the result to the app. We don't store this
+text ourselves beyond what's needed to display the result to you and to enforce a daily usage limit
+tied to your account (so the feature can't be abused at our expense). Google's own privacy policy
+governs how they handle the request once it reaches them.</p>
+
+<h2>Crash reporting</h2>
+<p>If the app crashes or hits an unexpected error, a report — including a stack trace, device/OS
+information, and app version — is sent to <strong>Sentry</strong>, our crash-reporting provider, so
+we can fix the problem. These reports aren't linked to your account or email.</p>
 
 <h2>Data stored only on your device</h2>
 <p>Builds you create but don't publish, your wishlist, and app preferences (like your chosen accent
@@ -40,8 +49,10 @@ theme) are stored locally on your device using a local database. This data is ne
 anywhere and is deleted if you uninstall the app.</p>
 
 <h2>What we don't do</h2>
-<p>PC Architect does not show ads, does not use third-party analytics or trackers, and does not
-access your device's location, camera, microphone, or contacts.</p>
+<p>PC Architect does not show ads, does not use advertising or marketing trackers, and does not
+access your device's location, camera, microphone, or contacts. The only third parties data is
+sent to are Supabase (accounts/community/AI Architect usage limits), Google's Gemini API (AI
+Architect requests only), and Sentry (crash reports only) — all described above.</p>
 
 <h2>Contact</h2>
 <p>Questions about this policy or your data can be sent to the developer via the contact details
