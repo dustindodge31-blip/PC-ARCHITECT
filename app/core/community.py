@@ -67,6 +67,14 @@ def current_user():
     return session.user if session else None
 
 
+def current_access_token() -> str | None:
+    """The signed-in user's current Supabase access token, or None if signed
+    out. Used to authenticate calls to the gemini-proxy Edge Function."""
+    client = _get_client()
+    session = client.auth.get_session()
+    return session.access_token if session else None
+
+
 def sign_up(email: str, password: str) -> None:
     client = _get_client()
     try:

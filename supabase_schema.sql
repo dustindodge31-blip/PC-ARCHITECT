@@ -69,3 +69,15 @@ alter table reports enable row level security;
 create policy "users can report as themselves"
     on reports for insert
     with check (auth.uid() = reporter_id);
+
+-- Backs the gemini-proxy Edge Function's per-user daily AI Architect cap.
+-- No RLS policies on purpose -- only the Edge Function (via the service role
+-- key, which bypasses RLS entirely) ever reads or writes this table.
+create table if not exists ai_usage (
+    user_id uuid not null,
+    usage_date date not null,
+    count int not null default 0,
+    primary key (user_id, usage_date)
+);
+
+alter table ai_usage enable row level security;
