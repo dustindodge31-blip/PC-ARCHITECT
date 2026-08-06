@@ -7,11 +7,11 @@ from ui import theme
 from ui.score_widgets import score_badge
 
 CATEGORY_FILTERS = [
-    ("Gaming", ft.Icons.SPORTS_ESPORTS_ROUNDED),
-    ("Creator", ft.Icons.MOVIE_CREATION_ROUNDED),
-    ("AI / Workstation", ft.Icons.PSYCHOLOGY_ROUNDED),
-    ("Office", ft.Icons.WORK_ROUNDED),
-    ("Custom", ft.Icons.TUNE_ROUNDED),
+    ("gaming", "Gaming", ft.Icons.SPORTS_ESPORTS_ROUNDED),
+    ("creator", "Creator", ft.Icons.MOVIE_CREATION_ROUNDED),
+    ("ai_workstation", "AI / Workstation", ft.Icons.PSYCHOLOGY_ROUNDED),
+    ("office", "Office", ft.Icons.WORK_ROUNDED),
+    (None, "Custom", ft.Icons.TUNE_ROUNDED),
 ]
 
 
@@ -80,6 +80,7 @@ def build_dashboard(
     on_view_all_builds=None,
     on_open_build=None,
     on_build_deleted=None,
+    on_select_category=None,
 ) -> ft.Control:
     builds = storage.list_builds()
     recent_builds = builds[:3]
@@ -165,6 +166,12 @@ def build_dashboard(
         ink=True,
     )
 
+    def on_filter_tap(key):
+        if key and on_select_category:
+            on_select_category(key)
+        elif on_go_build_creator:
+            on_go_build_creator()
+
     filter_row = ft.Row(
         [
             ft.Column(
@@ -177,7 +184,7 @@ def build_dashboard(
                         border=ft.Border.all(1, theme.BORDER),
                         alignment=ft.Alignment.CENTER,
                         content=ft.Icon(icon, size=20, color=theme.TEXT_PRIMARY),
-                        on_click=lambda e: on_go_build_creator() if on_go_build_creator else None,
+                        on_click=lambda e, k=key: on_filter_tap(k),
                         ink=True,
                     ),
                     ft.Text(label, size=10, color=theme.TEXT_MUTED),
@@ -185,7 +192,7 @@ def build_dashboard(
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=4,
             )
-            for label, icon in CATEGORY_FILTERS
+            for key, label, icon in CATEGORY_FILTERS
         ],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
     )
