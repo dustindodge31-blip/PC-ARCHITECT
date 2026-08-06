@@ -132,6 +132,16 @@ class CommunityView(ft.Column):
                     on_click=delete,
                 ),
             )
+        else:
+            actions.insert(
+                0,
+                ft.IconButton(
+                    icon=ft.Icons.FLAG_OUTLINED,
+                    icon_color=theme.TEXT_MUTED,
+                    tooltip="Report this build",
+                    on_click=lambda e: self._open_report_dialog(build),
+                ),
+            )
 
         return ft.Container(
             content=ft.Row(
@@ -154,6 +164,41 @@ class CommunityView(ft.Column):
             bgcolor=theme.SURFACE,
             border=ft.Border.all(1, theme.BORDER),
             border_radius=14,
+        )
+
+    def _open_report_dialog(self, build):
+        reason_field = ft.TextField(
+            label="Why are you reporting this?",
+            multiline=True,
+            min_lines=2,
+            max_lines=4,
+        )
+
+        def cancel(e):
+            self.app_page.pop_dialog()
+
+        def submit(e):
+            reason = (reason_field.value or "").strip()
+            if not reason:
+                return
+            try:
+                community.report_build(build.id, reason)
+            except community.CommunityError as ex:
+                self.error_text.value = str(ex)
+                self.error_text.visible = True
+                self._safe_update()
+            self.app_page.pop_dialog()
+
+        self.app_page.show_dialog(
+            ft.AlertDialog(
+                title=ft.Text(f"Report “{build.name}”"),
+                content=reason_field,
+                actions=[
+                    ft.TextButton("Cancel", on_click=cancel),
+                    ft.TextButton("Submit", on_click=submit),
+                ],
+                actions_alignment=ft.MainAxisAlignment.END,
+            )
         )
 
     def _safe_update(self):

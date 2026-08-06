@@ -154,6 +154,22 @@ def list_community_builds() -> list[CommunityBuild]:
     return results
 
 
+def report_build(build_id: str, reason: str) -> None:
+    client = _get_client()
+    user = current_user()
+    if not user:
+        raise CommunityError("Sign in before reporting a build.")
+
+    try:
+        client.table("reports").insert({
+            "build_id": build_id,
+            "reporter_id": user.id,
+            "reason": reason,
+        }).execute()
+    except Exception as e:
+        raise CommunityError(f"Couldn't submit report: {e}") from e
+
+
 def delete_community_build(build_id: str) -> None:
     client = _get_client()
     user = current_user()

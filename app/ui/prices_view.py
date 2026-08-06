@@ -21,6 +21,12 @@ class PricesView(ft.Column):
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
             self._segmented_toggle(),
+            ft.Text(
+                "Prices are simulated for demo purposes, not live retail data.",
+                size=11,
+                color=theme.TEXT_MUTED,
+                italic=True,
+            ),
             self.list_column,
         ]
         self.refresh()

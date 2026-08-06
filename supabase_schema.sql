@@ -52,3 +52,20 @@ create policy "users can favorite as themselves"
 create policy "users can remove their own favorites"
     on favorites for delete
     using (auth.uid() = user_id);
+
+-- Epic 9 follow-up: let signed-in users flag inappropriate community builds.
+-- No public read policy on purpose -- reports are only visible to you via the
+-- Supabase Table Editor (service role bypasses RLS), not to other app users.
+create table if not exists reports (
+    id uuid primary key default gen_random_uuid(),
+    build_id uuid not null references community_builds(id) on delete cascade,
+    reporter_id uuid not null,
+    reason text not null,
+    created_at timestamptz not null default now()
+);
+
+alter table reports enable row level security;
+
+create policy "users can report as themselves"
+    on reports for insert
+    with check (auth.uid() = reporter_id);
