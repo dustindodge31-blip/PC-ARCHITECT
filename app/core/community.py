@@ -58,6 +58,7 @@ class CommunityBuild:
     parts: dict
     favorite_count: int
     favorited_by_me: bool
+    owned_by_me: bool
 
 
 def current_user():
@@ -148,8 +149,21 @@ def list_community_builds() -> list[CommunityBuild]:
             parts=parts,
             favorite_count=counts.get(row["id"], 0),
             favorited_by_me=row["id"] in my_favorites,
+            owned_by_me=bool(user and row["user_id"] == user.id),
         ))
     return results
+
+
+def delete_community_build(build_id: str) -> None:
+    client = _get_client()
+    user = current_user()
+    if not user:
+        raise CommunityError("Sign in before deleting a build.")
+
+    try:
+        client.table("community_builds").delete().eq("id", build_id).eq("user_id", user.id).execute()
+    except Exception as e:
+        raise CommunityError(f"Couldn't delete: {e}") from e
 
 
 def toggle_favorite(build_id: str, currently_favorited: bool) -> None:

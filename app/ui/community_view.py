@@ -104,6 +104,35 @@ class CommunityView(ft.Column):
                 return
             self.refresh()
 
+        def delete(e):
+            try:
+                community.delete_community_build(build.id)
+            except community.CommunityError as ex:
+                self.error_text.value = str(ex)
+                self.error_text.visible = True
+                self._safe_update()
+                return
+            self.refresh()
+
+        actions = [
+            ft.IconButton(
+                icon=ft.Icons.FAVORITE_ROUNDED if build.favorited_by_me else ft.Icons.FAVORITE_BORDER_ROUNDED,
+                icon_color=theme.ERROR if build.favorited_by_me else theme.TEXT_MUTED,
+                on_click=toggle,
+            ),
+            ft.Text(str(build.favorite_count), size=11, color=theme.TEXT_MUTED),
+        ]
+        if build.owned_by_me:
+            actions.insert(
+                0,
+                ft.IconButton(
+                    icon=ft.Icons.DELETE_OUTLINE_ROUNDED,
+                    icon_color=theme.TEXT_MUTED,
+                    tooltip="Delete this published build",
+                    on_click=delete,
+                ),
+            )
+
         return ft.Container(
             content=ft.Row(
                 [
@@ -116,18 +145,7 @@ class CommunityView(ft.Column):
                         spacing=2,
                         expand=True,
                     ),
-                    ft.Column(
-                        [
-                            ft.IconButton(
-                                icon=ft.Icons.FAVORITE_ROUNDED if build.favorited_by_me else ft.Icons.FAVORITE_BORDER_ROUNDED,
-                                icon_color=theme.ERROR if build.favorited_by_me else theme.TEXT_MUTED,
-                                on_click=toggle,
-                            ),
-                            ft.Text(str(build.favorite_count), size=11, color=theme.TEXT_MUTED),
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        spacing=0,
-                    ),
+                    ft.Row(actions, spacing=0, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                 ],
                 spacing=12,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,

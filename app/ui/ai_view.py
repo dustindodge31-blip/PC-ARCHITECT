@@ -1,7 +1,7 @@
 """AI Architect screen: describe a build in plain language, get a real one back."""
 import flet as ft
 
-from core import ai_architect
+from core import ai_architect, ai_rate_limit
 from ui import theme
 
 
@@ -25,6 +25,7 @@ class AIArchitectView(ft.Column):
         )
         self.loading_ring = ft.ProgressRing(width=18, height=18, stroke_width=2, visible=False)
         self.error_text = ft.Text("", color=theme.ERROR, size=13, visible=False)
+        self.quota_text = ft.Text(self._quota_label(), color=theme.TEXT_MUTED, size=11)
 
         self.controls = [
             ft.Row(
@@ -45,12 +46,17 @@ class AIArchitectView(ft.Column):
                             spacing=12,
                             vertical_alignment=ft.CrossAxisAlignment.CENTER,
                         ),
+                        self.quota_text,
                         self.error_text,
                     ],
                     spacing=14,
                 )
             ),
         ]
+
+    def _quota_label(self) -> str:
+        remaining = ai_rate_limit.calls_remaining_today()
+        return f"{remaining}/{ai_rate_limit.DAILY_LIMIT} AI Architect requests left today"
 
     async def _on_generate(self, e):
         prompt = (self.prompt_field.value or "").strip()
@@ -73,6 +79,7 @@ class AIArchitectView(ft.Column):
         finally:
             self.loading_ring.visible = False
             self.generate_button.disabled = False
+            self.quota_text.value = self._quota_label()
             self._safe_update()
 
     def _safe_update(self):

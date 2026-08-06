@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 
 import httpx
 
-from core import catalog
+from core import ai_rate_limit, catalog
 from core.env import ENV_PATH  # noqa: F401 -- imported for its load_dotenv() side effect
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -65,6 +65,11 @@ async def generate_build(prompt: str) -> AIBuildResult:
         raise AIArchitectError(
             "No Gemini API key configured. Add GEMINI_API_KEY to the project's .env file."
         )
+    if ai_rate_limit.calls_remaining_today() <= 0:
+        raise AIArchitectError(
+            f"You've hit today's limit of {ai_rate_limit.DAILY_LIMIT} AI Architect requests. "
+            "Try again tomorrow."
+        )
 
     payload = {
         "systemInstruction": {
@@ -82,6 +87,8 @@ async def generate_build(prompt: str) -> AIBuildResult:
             response = await client.post(API_URL, params={"key": GEMINI_API_KEY}, json=payload)
     except httpx.RequestError as e:
         raise AIArchitectError(f"Couldn't reach Gemini: {e}") from e
+
+    ai_rate_limit.record_call()  # counts against the daily cap regardless of outcome below -- Gemini bills on receipt
 
     if response.status_code in (401, 403):
         raise AIArchitectError(
