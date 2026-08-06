@@ -1,4 +1,5 @@
 """PC Architect — Flet desktop entry point (phone-sized window for Android preview)."""
+import os
 import sys
 import traceback
 from datetime import datetime, timezone
@@ -25,11 +26,22 @@ def _log_uncaught_exception(exc_type, exc_value, exc_tb):
 
 sys.excepthook = _log_uncaught_exception
 
+from core.env import ENV_PATH  # noqa: F401 -- loads .env (incl. SENTRY_DSN) before we read it below
+
+_sentry_dsn = os.getenv("SENTRY_DSN")
+if _sentry_dsn:
+    import sentry_sdk
+
+    # Initialized after sys.excepthook above so Sentry's ExcepthookIntegration
+    # wraps and preserves our local crash_log.txt handler, rather than
+    # replacing it -- both run on every uncaught exception.
+    sentry_sdk.init(dsn=_sentry_dsn, traces_sample_rate=0.0)
+
 import asyncio
 
 import flet as ft
 
-from core import storage, window_state
+from core import prebuilts, storage, window_state
 from ui import theme
 from ui.dashboard import build_dashboard
 from ui.build_creator import BuildCreatorView
@@ -98,6 +110,15 @@ async def main(page: ft.Page):
         build_creator_view.load_from_parts(name, selection, reasoning)
         page.update()
 
+    def open_prebuilt_in_creator(key):
+        resolved = prebuilts.get_prebuilt(key)
+        if not resolved:
+            return
+        name, blurb, parts = resolved
+        show_build_creator()
+        build_creator_view.load_from_parts(name, parts, blurb)
+        page.update()
+
     def show_dashboard():
         body.content = build_dashboard(
             page,
@@ -106,6 +127,7 @@ async def main(page: ft.Page):
             on_view_all_builds=show_my_builds_list,
             on_open_build=open_build_in_creator,
             on_build_deleted=show_dashboard,
+            on_select_category=open_prebuilt_in_creator,
         )
         nav.selected_index = 0
         page.update()
